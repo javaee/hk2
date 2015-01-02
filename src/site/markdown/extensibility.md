@@ -18,6 +18,7 @@ overview of each feature.  Among the set of HK2 features are:
 + [InheritableThread Scope](extensibility.html#InheritableThread_Scope)
 + [Proxies](extensibility.html#Proxies)
 + [Dealing with ClassLoading issues](extensibility.html#)
++ [Dynamic Injection Resolvers](extensibility.html#aDynamic_Injection_Resolvers)
 + [Custom Injection Resolvers](extensibility.html#aCustom_Injection_Resolvers)
 + [Validation](extensibility.html#Validation)
 + [Instance Lifecycle](extensibility.html#Instance_Lifecycle)
@@ -216,6 +217,17 @@ the [Descriptor][descriptor] is being reified.  It might also be possible to hav
 or construct the class dynamically using weaving or some other class building technology.
 The mind boggles at all the ways [HK2Loader][hk2loader] can be implemented.
 
+### Dynamic Injection Resolvers
+
+By default the system provides JSR-330 standard injection. Sometimes, however, it might be desirable
+to subvert the standard [@Inject][javaxinject] resolution processes with your own custom [@Inject][javaxinject] resolution.
+
+In order to do so, the user implements [DynamicResolver][dynamicresolver].
+The parameterized type of the [DynamicResolver][dynamicresolver] must be the injection type that they will resolve.
+The user implementation of [DynamicResolver][dynamicresolver] is then bound into a [ServiceLocator][servicelocator] like any other singleton service.
+
+Please take a look at the [dynamic resolver example][dynamic-resolver-example] for a more thorough explanation.
+
 ### Custom Injection Resolvers
 
 By default the system provides JSR-330 standard injection.
@@ -358,11 +370,13 @@ Using the [ErrorService][errorservice] can be a convenient place to standardize 
 [javaxinject]: http://docs.oracle.com/javaee/6/api/javax/inject/Inject.html
 [injectionresolver]: apidocs/org/glassfish/hk2/api/InjectionResolver.html
 [injectionpointindicator]: apidocs/org/glassfish/hk2/api/InjectionPointIndicator.html
+[dynamicresolver]: apidocs/org/glassfish/hk2/api/DynamicResolver.html
 [validationservice]: apidocs/org/glassfish/hk2/api/ValidationService.html
 [security-lockdown-example-runner]: security-lockdown-example-runner.html
 [instancelifecyclelistener]: apidocs/org/glassfish/hk2/api/InstanceLifecycleListener.html
 [classanalyzer]: apidocs/org/glassfish/hk2/api/ClassAnalyzer.html
 [custom-resolver-example]: custom-resolver-example.html
+[dynamic-resolver-example]: dynamic-resolver-example.html
 [runlevelservices]: runlevel.html
 [activedescriptor]: apidocs/org/glassfish/hk2/api/ActiveDescriptor.html
 [dynamicconfigurationlistener]: apidocs/org/glassfish/hk2/api/DynamicConfigurationListener.html

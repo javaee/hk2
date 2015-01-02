@@ -42,24 +42,55 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.glassfish.hk2</groupId>
-        <artifactId>hk2-parent</artifactId>
+        <artifactId>examples</artifactId>
         <version>2.4.0-b08-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>examples</artifactId>
-    <packaging>pom</packaging>
-    <name>Examples of various use cases</name>
+    <artifactId>dynamic-resolver-example</artifactId>
+    <name>Dynamic Resolver Example</name>
+    <description>A use case for dynamic injection resolution</description>
 
-    <modules>
-        <module>ctm</module>
-        <module>custom-resolver</module>
-        <module>security-lockdown</module>
-        <module>caching</module>
-        <module>events</module>
-        <module>configuration</module>
-        <module>dynamic-resolver</module>
-    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>osgiversion-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>asm-all-repackaged</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-locator</artifactId>
+        </dependency>
+    </dependencies>
 </project>
