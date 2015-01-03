@@ -129,7 +129,7 @@ public class Flight {
 ```
 
 Note that unless we have added a service or factory qualified with @Boeing the Plane injection above will not be
-resolved. Once again we can turn to dynamic injection to help us dynamically create a qualified instances:
+resolved. Once again we can turn to dynamic injection to help us dynamically create qualified instances:
 
 ```java
 @Boeing
@@ -147,18 +147,18 @@ public class BoeingDynamicResolver implements DynamicResolver<Object> {
 ```
 
 In the BoeingDynamicResolver above notice that we have placed the @Boeing qualifier on the resolver and
-neglect to specify the dynamic resolver type parameter. By placing a @Boeing qualifier on the resolver and
-using omitting the type parameter we are telling the system the resolver can satisfy the injection
-of any type qualified with @Boeing. Of course, with the flexibility of being able to handle any type comes
-the responsibility of ensuring the object returned by the resolver can be injected safely into the injection point.
+neglect to specify the type parameter. By placing a @Boeing qualifier on the resolver and omitting the
+type parameter we are telling the system the resolver can satisfy the injection of any type qualified with
+@Boeing. Of course, with the flexibility of being able to handle any type comes the responsibility of
+ensuring the object returned by the resolver can be injected safely into the injection point.
 
 Note that dynamic qualified injection resolution does not limited you to a single qualifier. You can use
 multiple qualifiers on injection points and as long as these qualifiers are placed on your DynamicResolver
-implementation resolution will be satisfied by your dynamic resolver.
+implementation injection resolution will be satisfied by your dynamic resolver.
 
 Also note that placing qualifiers on DynamicResolver implementations is for hinting purpose only. Qualifiers
-on injection points on the other hand might be something you are interested and therefore are accessible from
-the DynamicInjectee parameter.
+on injection points on the other hand might be something you are interested and are therefore are accessible
+from the DynamicInjectee parameter.
 
 
 ### Dynamic Qualified Type Injection
@@ -199,10 +199,10 @@ public class Traveler {
 }
 ```
 
-Once again, there is no @Airline qualified Flight service in the system and so we will resort to using
-dynamic resolver to resolve it. Unlike the previous dynamic qualified injection example where we resolved
-any type qualified with @Boeing with dynamic qualified type injection we are only interested in resolving
-an explicit type (Flight) qualified with an explicity qualifier (@Airline).
+Once again, there is no @Airline qualified Flight service in the system and so we will resort to using a
+dynamic resolver. Unlike the previous dynamic qualified injection example where we resolved any type qualified
+with @Boeing with dynamic qualified type injection we are only interested in resolving an explicit type
+(Flight) qualified with an explicity qualifier (@Airline).
 
 
 ```java
@@ -231,10 +231,10 @@ only satisfy the injection of Flight types qualified with @Airline.
 Now that we have learned about the various kinds of dynamic injection it is important to understand
 how dynamic resolution works. When an unsatisfiable injectee is encountered the dynamic resolution
 process starts with the most restrictive premise, we are trying to perform a Dynamic Qualified Type
-injection. If a resolver is not found for the injectee's type and qualifiers then we look for an
-Dynamic Qualified resolver. If again a dynamic resolver for the injectee's qualifiers is not found
-we perform a last ditch effort and look for Dynamic Type resolver. If we still unable to find a dynamic
-resolver for the injectee's type then the injectee can not be resolved and [UnsatisfiedDependencyException][usde]
+injection. If a resolver is not found for the injectee's type and qualifiers then we look for a Dynamic
+Qualified resolver. If again a dynamic resolver for the injectee's qualifiers is not found we perform
+a last ditch effort and look for Dynamic Type resolver. If we are still unable to find a dynamic resolver
+for the injectee's type then the injectee can not be resolved and [UnsatisfiedDependencyException][usde]
 will be thrown.
 
 
