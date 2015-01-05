@@ -104,10 +104,10 @@ public class DynamicInjecteeImpl<T extends Type> implements DynamicInjectee<T> {
     }
 
     @Override
-    public <T extends Annotation> T getQualifier(Class<T> type) {
+    public <A extends Annotation> A getQualifier(Class<A> type) {
         for (Annotation qualifier : qualifiers) {
             if (qualifier.annotationType().equals(type)) {
-                return (T) qualifier;
+                return (A) qualifier;
             }
         }
 

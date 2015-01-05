@@ -66,12 +66,12 @@ public interface DynamicInjectee<T> {
      * Get the given qualifier type from the set of qualifiers associated with
      * this injectee.
      *
-     * @param <T> the type of the qualifier
+     * @param <A> the type of the qualifier
      * @param type the qualifier class
      * @return Will return a specified qualifier annotation or null the dynamic
      * injectee doesn't contain the qualifier.
      */
-    public <T extends Annotation> T getQualifier(Class<T> type);
+    public <A extends Annotation> A getQualifier(Class<A> type);
 
     /**
      * This is the set of qualifiers for this dynamic injectee. All of these

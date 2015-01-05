@@ -49,12 +49,14 @@ import org.glassfish.hk2.api.DynamicResolver;
  */
 @Singleton
 @DynamicQualifiedQualifer
-public class DynamicQualifedResolver implements DynamicResolver {
+public class DynamicQualifedResolver implements DynamicResolver<Object> {
 
     @Override
-    public Object resolve(DynamicInjectee dynamic) {
+    public Object resolve(DynamicInjectee<Object> dynamic) {
+        DynamicQualifiedQualifer qualifier = dynamic.getQualifier(DynamicQualifiedQualifer.class);
         assert dynamic != null;
         assert !dynamic.getQualifiers().isEmpty();
+        assert qualifier != null;
         assert dynamic.getParent() != null;
         assert dynamic.getParentClass() != null;
 

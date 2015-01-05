@@ -49,10 +49,10 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Boeing
 @Service
-public class BoeingDynamicResolver implements DynamicResolver {
+public class BoeingDynamicResolver implements DynamicResolver<Object> {
 
     @Override
-    public Object resolve(DynamicInjectee injectee) {
+    public Object resolve(DynamicInjectee<Object> injectee) {
         //create a new Plane from scratch. note that you can inject services
         //into the resolver to help you construct or retrieve Plane instances.
         return new Plane(new EngineImpl("Royce Royce", 93000));

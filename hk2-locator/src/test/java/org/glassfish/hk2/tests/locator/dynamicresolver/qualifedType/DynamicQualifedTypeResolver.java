@@ -53,9 +53,11 @@ public class DynamicQualifedTypeResolver implements DynamicResolver<DynamicQuali
 
     @Override
     public DynamicQualifiedType resolve(DynamicInjectee<DynamicQualifiedType> dynamic) {
+        DynamicQualifiedTypeQualifer qualifier = dynamic.getQualifier(DynamicQualifiedTypeQualifer.class);
         assert dynamic != null;
         assert DynamicQualifiedType.class.equals(dynamic.getType());
         assert !dynamic.getQualifiers().isEmpty();
+        assert qualifier != null;
         assert dynamic.getParent() != null;
         assert dynamic.getParentClass() != null;
 
