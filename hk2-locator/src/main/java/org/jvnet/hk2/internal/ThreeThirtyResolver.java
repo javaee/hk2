@@ -39,15 +39,21 @@
  */
 package org.jvnet.hk2.internal;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.glassfish.hk2.api.ActiveDescriptor;
+import org.glassfish.hk2.api.DynamicInjectee;
+import org.glassfish.hk2.api.DynamicResolver;
 import org.glassfish.hk2.api.Injectee;
 import org.glassfish.hk2.api.InjectionResolver;
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.UnsatisfiedDependencyException;
+import org.glassfish.hk2.utilities.DynamicInjecteeImpl;
+import org.glassfish.hk2.utilities.reflection.ParameterizedTypeImpl;
 
 /**
  * @author jwells
@@ -56,7 +62,7 @@ import org.glassfish.hk2.api.UnsatisfiedDependencyException;
 @Named(InjectionResolver.SYSTEM_RESOLVER_NAME)
 public class ThreeThirtyResolver implements InjectionResolver<Inject> {
     private final ServiceLocatorImpl locator;
-    
+
     /* package */ ThreeThirtyResolver(ServiceLocatorImpl locator) {
         this.locator = locator;
     }
@@ -67,13 +73,61 @@ public class ThreeThirtyResolver implements InjectionResolver<Inject> {
     @Override
     public Object resolve(Injectee injectee, ServiceHandle<?> root) {
         ActiveDescriptor<?> ad = locator.getInjecteeDescriptor(injectee);
-        
+
         if (ad == null) {
-            if (injectee.isOptional()) return null;
-            
-            throw new MultiException(new UnsatisfiedDependencyException(injectee));
+
+            //if an active descriptor for the injectee was not found let's check
+            //if the injectee has dynamic resolver.
+            Type type = injectee.getRequiredType();
+            DynamicResolver resolver = null;
+
+            Set<Annotation> qualifiers = injectee.getRequiredQualifiers();
+            Object instance = null;
+
+            if (!qualifiers.isEmpty()) {
+                Annotation[] annotations = qualifiers.toArray(new Annotation[qualifiers.size()]);
+
+                //lets check if there is a "dynamic qualified typed" resolver for the injectee
+                resolver = locator.getService(new ParameterizedTypeImpl(DynamicResolver.class, type), annotations);
+
+                //if resolver for "dynamic qualified type" resolver was not found
+                //let's check if an "dynamic qualifed" resolver exists
+                if (resolver == null) {
+                    resolver = locator.getService(DynamicResolver.class, annotations);
+                }
+            }
+
+            //if qualifier based dynamic injection resolver was not found let's
+            //check if an "dynamic type" resolver exists
+            if (resolver == null) {
+                resolver = locator.getService(new ParameterizedTypeImpl(DynamicResolver.class, type));
+            }
+
+            //if we have found a resolver let's call it to resolve the injectee
+            if (resolver != null) {
+                DynamicInjectee dynamic = new DynamicInjecteeImpl(
+                        injectee.getRequiredType(),
+                        injectee.getRequiredQualifiers(),
+                        injectee.getPosition(),
+                        injectee.isOptional(),
+                        injectee.getInjecteeClass(),
+                        injectee.getParent()
+                );
+
+                instance = resolver.resolve(dynamic);
+            }
+
+            if (injectee.isOptional()) {
+                return instance;
+            }
+
+            if (instance == null) {
+                throw new MultiException(new UnsatisfiedDependencyException(injectee));
+            }
+
+            return instance;
         }
-        
+
         return locator.getService(ad, root, injectee);
     }
 
