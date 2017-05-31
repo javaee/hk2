@@ -39,8 +39,8 @@
 Getting started
 ---------------
 
-- [Maven build](getting-started.html#Maven_Build)
-- [Automatic Service Population](getting-started.html#Automatic_Service_Population)
+- [Maven build](getting-started.html#maven-build)
+- [Automatic Service Population](getting-started.html#automatic-service-population)
 
 ### Maven Build ###
 
