@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<h2>All Pages</h2>
+<h2>Sitemap</h2>
 <ul>
   {% assign pages = site.html_pages | where_exp:'doc','doc.sitemap != false' %}
   {% for page in pages %}
@@ -10,7 +10,7 @@ layout: default
                             and page.url != "/LICENSE.html"
                             and page.url != "/sitemap.html" %}
         <li>
-          <a href="{{ page.url }}">{{ page.url | remove_first: "/"}}</a>
+          <a href="{{site.url}}{{ page.url }}">{{ page.url | remove_first: "/"}}</a>
         </li>
       {% endif %}
   {% endfor %}
