@@ -216,13 +216,17 @@ blockquote {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  // height: 6px;
   background-color: #f0f0f0;
   //padding: 1rem;
-  padding-top: 4px;
-  padding-bottom: 14px;
+  // padding-top: 4px;
+  // padding-bottom: 14px;
   font-size: 0.8em;
   text-align: center;
+}
+
+.footer a {
+  line-height: 30px;
 }
 
 .oracle {
@@ -239,4 +243,8 @@ blockquote {
   //float: center;
   color: FF0000;
   width: 900px;
+}
+
+#content-wrapper {
+  padding-bottom: 30px;
 }
