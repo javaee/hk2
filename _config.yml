@@ -2,7 +2,6 @@ theme: jekyll-theme-architect
 
 title: HK2 - Dependency Injection Kernel
 description: A light-weight and dynamic dependency injection framework
-url: http://hk2-project.github.io/hk2
 
 # sidebar links url
 links:

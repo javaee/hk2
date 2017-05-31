@@ -10,7 +10,7 @@ layout: default
                             and page.url != "/LICENSE.html"
                             and page.url != "/sitemap.html" %}
         <li>
-          <a href="{{site.url}}{{ page.url }}">{{ page.url | remove_first: "/"}}</a>
+          <a href="{{ site.baseurl }}{{ page.url }}">{{ page.url | remove_first: "/"}}</a>
         </li>
       {% endif %}
   {% endfor %}
