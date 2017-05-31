@@ -183,7 +183,7 @@ This is an example of a proxiable scope:
 @Target( { TYPE, METHOD })
 public @interface ProxiableSingleton {
 }
-```java
+```
 
 While normally every service in a proxiable scope is proxiable, you can override the default proxying behavior
 on a per-service basis.  This is also true for services in non-proxiable scopes.  For example you can make
@@ -198,7 +198,7 @@ whether or not they should be proxied.  This is a service in Singleton scope tha
 @Singleton @UseProxy
 public class SingletonService {
 }
-```java
+```
 
 This is a service in the ProxiableSingleton scope that will NOT be proxied (even though ProxiableSingleton is
 a Proxiable scope):
@@ -207,7 +207,7 @@ a Proxiable scope):
 @ProxiableSingleton @UseProxy(false)
 public class AnotherService {
 }
-```java
+```
 
 #### Proxying within the same scope
 
@@ -224,7 +224,7 @@ The following scope is a proxiable scope where services injected into other serv
 @Target( { TYPE, METHOD })
 public @interface RequestScope {
 }
-```java
+```
 
  Individual descriptors can also explicity set whether or not they should be proxied for other services in the same
  scope by setting the [isProxyForSameScope][isproxyforsamescope] value.
@@ -236,7 +236,7 @@ public @interface RequestScope {
 @RequestScope @ProxyForSameScope
 public class ExpensiveRequestService {
 }
-```java
+```
 
 #### Proxies and equals()
 
@@ -390,7 +390,7 @@ public abstract class GenericService {
   @Inject @Self
   private ActiveDescriptor<?> myOwnDescriptor;
 }
-```java
+```
 
 ### ServiceLocator to ServiceLocator Bridge
 

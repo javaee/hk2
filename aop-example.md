@@ -90,7 +90,7 @@ public class CachingMethodInterceptor implements MethodInterceptor {
         return cache.get(key);
     }
 }
-```java
+```
 
 The cache is the HashMap field named cache.  After some defensive checking
 the interceptor creates a CacheKey from the input parameters.  The interceptor then
@@ -129,7 +129,7 @@ public class CacheKey {
         return other.input.equals(input);
     }
 }
-```java
+```
 
 The CacheKey has an appropriate hashCode and equals method for objects that will be used as
 a key in a HashMap.  The CacheKey will also bin be used in the constructor interceptor.
@@ -167,7 +167,7 @@ public class CachingConstructorInterceptor implements ConstructorInterceptor {
         // Found it in the cache!  Do not call the method
         return cache.get(key);
     }
-```java
+```
 
 This code should look familiar, as it follows exactly the same pattern as the method interceptor.
 This interceptor will only work on constructors with one input parameter and will short-circuit
@@ -197,7 +197,7 @@ of the Cache annotation:
 @Target( { METHOD, CONSTRUCTOR })
 public @interface Cache {
 }
-```java
+```
 
 The example [InterceptionService][interceptionservice] is named HK2InterceptionService and is in
 the Singleton scope, as must all implementations of [InterceptionService][interceptionservice].  When
@@ -247,7 +247,7 @@ public class HK2InterceptionService implements InterceptionService {
         return null;
     }
 }
-```java
+```
 
 In the next section we will use our caching annotation and the caching interceptors on an example
 set of services.
@@ -281,7 +281,7 @@ public class ExpensiveMethods {
         timesCalled = 0;
     }
 }
-```java
+```
 
 The ExpensiveMethods service is in the Singleton scope and hence will get created once.  However, the
 method named veryExpensiveCalculation will only get called once per input integer.  So if the method
@@ -311,7 +311,7 @@ with the test code:
         // But the expensive call was never made again, since the result was cached!
         Assert.assertEquals(1, expensiveMethods.getNumTimesCalled());
     }
-```java
+```
 
 ### Using @Cache on a Constructor
 
@@ -346,7 +346,7 @@ public class ExpensiveConstructor {
         return numTimesConstructed;
     }
 }
-```java
+```
 
 The ExpensiveConstructor class takes an integer input parameter.  In order to create an integer input
 that can change values there is an implementation of [Factory][factory] called InputFactory which produces
@@ -370,7 +370,7 @@ public class InputFactory implements Factory<Integer> {
         this.input = input;
     }
 }
-```java
+```
 
 The test code for this demonstrates how to change the input parameter for the
 ExpensiveConstructor service.  The test then uses the static methods to show that
@@ -411,7 +411,7 @@ the service is in the PerLookup scope.
         
         Assert.assertFalse(instanceOne.equals(instanceThree));
     }
-```java
+```
 
 ### AOP Requirements
 

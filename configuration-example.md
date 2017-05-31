@@ -107,7 +107,7 @@ public interface WebServer {
      */
     public List<File> getCertificates(); 
 }
-```java
+```
 
 Several fields of the WebServer are meant to be configured from an external source.  In this example that source will be
 a properties file, which we will look at in detail later.  All the configuration properties of the WebServer are encapsulated
@@ -185,7 +185,7 @@ public class WebServerBean {
         this.port = port;
     }
 }
-```java
+```
 
 The implementation of the WebServer contract is the WebServerImpl.  The WebServerImpl is in the @ConfiguredBy scope, and injects
 several fields from the WebServerBean.  The interesting parts of this code can be seen below.  You can find the full source for
@@ -272,7 +272,7 @@ public class WebServerImpl implements WebServer {
         return retVal;
     }
 }
-```java
+```
 
 The above implementation of the WebServer contract is an HK2 [Service][service], and it is in the [ConfiguredBy][configuredby] scope.  The
 [ConfiguredBy][configuredby] annotation requires the name of the type upon which instances of the service are based, in this case
@@ -286,7 +286,7 @@ this example we don't do that, but the ability to do so is there.  The admin por
 ```java
     @Configured
     private int adminPort;
-```java
+```
 
 By putting [@Configured][configured] on the field, that tells the HK2 configuration system to look for a getter named getAdminPort 
 on the bean, and to get the value for the adminPort from that property.  By the time the postConstruct method of the WebServerImpl
@@ -306,7 +306,7 @@ sets the ssl and http ports of the server:
             openPort = port;
         }
     }
-```java
+```
 
 There are several interesting things to notice about this method.  One thing is that we had to put @Configured on all the parameters
 that were to come from beans.  If there had been other parameters on this method they would have been filled in with hk2 services
@@ -322,7 +322,7 @@ there is this injection point:
 ```java
     @Inject
     private IterableProvider<SSLCertificateService> certificates;
-```java
+```
 
 Let us look in detail at the SSLCertificateService to more fully understand the above usage.
 
@@ -346,7 +346,7 @@ public class SSLCertificateService {
     }
 
 }
-```java
+```
 
 Like the WebServerImpl this service is in the [@ConfiguredBy][configuredby] scope.  Instances of this service will be created for each instance
 of type &quot;SSLCertificateBean&quot; found in the [Hub][hub].  Look at the [@Configured][configured] injection point:
@@ -354,7 +354,7 @@ of type &quot;SSLCertificateBean&quot; found in the [Hub][hub].  Look at the [@C
 ```java
     @Configured("$bean")
     private SSLCertificateBean certificateBean;
-```java
+```
 
 In this case the [@Configured][configured] annotation has a value of &quot;$bean&quot;.  When a [@Configured][configured] annotation has a
 value of &quot;$bean&quot; it means to inject the whole bean rather than a value from the bean.  The code for the SSLCertificateBean will
@@ -363,7 +363,7 @@ be found below in the discussion about how the property file is translated into 
 ```java
     @Inject
     private IterableProvider<SSLCertificateService> certificates;
-```java
+```
 
 This injection point will be able to get all of the configured SSKCertificateService instances created.  So if there are two SSLCertificateBeans
 in the [Hub][hub] then this iterator will return two SSLCertificateServices.
@@ -385,7 +385,7 @@ SSLCertificateBean.Corporate.secretKeyLocation=Corporate.pem
 
 SSLCertificateBean.HR.certificateLocation=HRx509.cert
 SSLCertificateBean.HR.secretKeyLocation=HR.pem
-```java
+```
 
 The way the HK2 Properties interpreter works is that property keys have three parts, which is the type name followed by the instance name
 followed by the parameter name.  So the above properties file means to add an instance of the WebServerBean named &quot;Acme&quot; to the
@@ -425,7 +425,7 @@ public class SSLCertificateBean {
         this.secretKeyLocation = secretKeyLocation;
     }
 }
-```java
+```
 
 The SSLCertificateBean has File as the type for both the &quot;secretKeyLocation&quot; and &quot;CertificateLocation&quot; parameters.  HK2
 knows how to translate the strings in the properties file because File has a public constructor that takes a string, which is what
@@ -454,7 +454,7 @@ is how the test code reads the above property file into the [Hub][hub]:
         
         // Now read the configuration into hk2
         propertyFileHandle.readProperties(configuration);
-```java
+```
 
 The reason for using a [PropertyFileHandle][propertyfilehandle] is because the handle keeps the state
 of the property file the last time it was read.  In this way if the property file is modified
@@ -479,7 +479,7 @@ changes:
         
         // Tell hk2 about the change
         propertyFileHandle.readProperties(configuration);
-```java
+```
 
 The propertyFileHandle will notice the changes and inform the [Hub][hub], which will then notify the backing
 WebServerImpl about the modified dynamic properties.  Even though the adminPort has changed the WebServerImpl
@@ -496,7 +496,7 @@ done via static methods on helper classes.  This is the test initialization code
         
         // Enable Properties service, to get service properties from a Properties object
         PropertyFileUtilities.enablePropertyFileService(locator);
-```java
+```
 
 The [PropertyFileService][propertyfileservice] also needs the mapping from type name to Java Bean class.  In order
 to do this we must configure the [PropertyFileService][propertyfileservice] with a [PropertyFileBean][propertyfilebean].
@@ -512,7 +512,7 @@ type named &quot;WebServerBean&quot; to the WebServerBean class:
         // Add in the mapping from type name to bean classes
         PropertyFileService propertyFileService = locator.getService(PropertyFileService.class);
         propertyFileService.addPropertyFileBean(propertyFileBean);
-```java
+```
 
 The last thing to do in order to setup the environment is to tell HK2 about the backing HK2 services.  This is
 done with a simple call to addClasses:
@@ -522,7 +522,7 @@ done with a simple call to addClasses:
         ServiceLocatorUtilities.addClasses(locator,
                 SSLCertificateService.class,
                 WebServerImpl.class);
-```java
+```
 
 The @Before block of the test code has now setup HK2 for the test run.
 
@@ -618,7 +618,7 @@ properties file:
         Assert.assertEquals(8081, webServer.getSSLPort());
         Assert.assertEquals(8080, webServer.openPort());
     }
-```java
+```
 
 ### Final thoughts
 

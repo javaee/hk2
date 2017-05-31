@@ -36,7 +36,8 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Integration
+Integration
+-----------
 
 
 ### GlassFish integration
@@ -58,7 +59,7 @@ The following is example code that returns the application ServiceLocator:
             return null;
         }
     }
-```java
+```
 
 There are several options for populating the per-application ServiceLocator. The first is to use the [hk2-inhabitant-generator][inhabitant-generator]. 
 For EJBs and Library JAR files the system will read files named application located in **META-INF/hk2-locator/**. For war files the system will read files named application located in WEB-INF/classes/hk2-locator.
@@ -84,7 +85,8 @@ The following is an example maven stanza using the [hk2-inhabitant-generator][in
             </plugin>
         </plugins>
     </build>
-```xml
+```
+
 Note that the same stanza can be used for a WAR file, and if the packaging type of the pom is "war" then the [hk2-inhabitant-generator][inhabitant-generator] will automatically put the generated inhabitant file into the correct place.
 
 All inhabitant files are read when the application is deployed, and hence should be able to be looked up from the application [ServiceLocator][serviceLoc].

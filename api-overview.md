@@ -111,7 +111,7 @@ it up:
         
         ...
     }
-``` java
+```
 
 You use the [DynamicConfigurationService][dynamicconfigurationservice] to create [DynamicConfiguration][dynamicconfiguration] instances.
 The [DynamicConfiguration][dynamicconfiguration] interface has a few methods for binding in descriptions of your services.
@@ -140,7 +140,7 @@ that contains all of that information can be built up using our EDSL:
                          in("org.glassfish.api.PerLookup").
                          build();
     }
-``` java
+```
 
 The [BuilderHelper][builderhelper] link method creates a [DescriptorBuilder][descriptorbuilder].
 The [DescriptorBuilder][descriptorbuilder] then creates more and more specific versions of itself
@@ -178,7 +178,7 @@ in the previous section but uses the [DescriptorImpl][descriptorimpl] to do it:
         
         return retVal;
     }
-``` java
+```
 
 One interesting thing to notice in the above code is that we added the implementation class as an advertisedContract.
 This was done automatically for us in the [BuilderHelper][builderhelper] case, but needed to be explicitly done in this case.
@@ -203,7 +203,7 @@ Here is an example:
         
         config.commit();
     }
-``` java
+```
 
 The method createWidgetDescriptor is from the preceding examples.
 In the above code we call the createDynamicConfiguration method of [DynamicConfigurationService][dynamicconfigurationservice].
@@ -236,7 +236,7 @@ There are several mechanisms for looking up services in HK2.  The simplest is to
  
 ``` java
   Widget widget = locator.getService(Widget.class);
-``` java
+```
 
 The type passed in can be any implementation class or interface with which the service was bound with as an advertisable
 contract.  If there is no Widget that can be found in the system then the getService method will return null.  If there
@@ -266,7 +266,7 @@ Widget like this:
     public Widget getNamedWidget(String name) {
         return locator.getService(Widget.class, name);
     }
-``` java
+```
 
 The given name is used to further qualify the specific Widget that was bound into the system.
  
@@ -282,7 +282,7 @@ Lets see how this would be done.  Suppose you have a qualifier called Blue, defi
 @Target( { TYPE, METHOD, FIELD, PARAMETER })
 public @interface Blue {
 }
-``` java
+```
 
 Normally you wouldn't implement Blue, but in this case you do need an implementation in order to be able to
 look it up.  You do that by providing an implement of Blue that extends [AnnotationLiteral][annotationliteral]:
@@ -290,13 +290,13 @@ look it up.  You do that by providing an implement of Blue that extends [Annotat
 ``` java
 public class BlueImpl extends AnnotationLiteral<Blue> implements Blue {
 }
-``` java
+```
 
 You can now use this BlueImpl to look up your qualified Widget in a [ServiceLocator][servicelocator] like this:
  
 ``` java
     Widget widget = locator.getService(Widget.class, new BlueImpl());
-``` java
+```
 
 This will get the Widget that has been qualified with @Blue.
  
@@ -306,7 +306,7 @@ You may also want to get all of the services that have advertised a certain cont
  
 ``` java
     List<Widget> widgetList = locator.getAllServices(Widget.class);
-``` java
+```
 
 The list returned will have as many Widgets that could be found in the system.  It is important to note in this case that all
 of the Widgets will have been classloaded when you use this call, so if classloading performance is important to you be careful
@@ -327,7 +327,7 @@ The most common case is to use an [IndexedFilter][indexedfilter] provided by [Bu
   IndexedFilter widgetFilter = BuilderHelper.createContractFilter(Widget.class.getName());
   
   List<ActiveDescriptor<?>> widgetDescriptors = locator.getDescriptors(widgetFilter);
-```java
+```
 
 Using an [IndexedFilter][indexedfilter] can greatly improve the search time for your [Descriptors][descriptor].
  
@@ -343,7 +343,7 @@ rules of HK2:
 
 ```java
   Widget widget = locator.create(WidgetImpl.class);
-```java
+```
 
 It is important to note that the only references to other beans that will have been initialized when this returns are those necessary
 to perform constructor injection.  Hence any @Inject fields or @Inject initializer methods will NOT have been initialized when this
@@ -354,21 +354,21 @@ use the inject method:
 
 ```java
   locator.inject(widget);
-```java
+```
 
 The object given will be analyzed and all of the fields and methods will be injected upon return.  However, any postConstruct
 method on the object will not have been called yet.  That can be done with the postConstruct method:
  
 ```java
   locator.postConstruct(widget);
-```java
+```
 
 This method call will find the postConstruct method on widget and call it.  Once the user is finished with the object, they can force
 the preDestroy to be called on it by using the preDestroy method:
  
 ```java
   locator.preDestroy(widget);
-```java
+```
 
 This sequence can be very useful when there is some special processing that needs to happen and the user does not want to have HK2 manage
 the objects themselves.

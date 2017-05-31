@@ -48,7 +48,7 @@ For example, this XML contains all the data about a Tenant named Alice
 <environments>
     <environment name="Alice" minSize="1" maxSize="2" />
 </environments>
-```xml
+```
 
  This XML contains all the data about a tenant named Bob
  
@@ -56,7 +56,7 @@ For example, this XML contains all the data about a Tenant named Alice
 <environments>
     <environment name="Bob" minSize="10" maxSize="20" />
 </environments>
-```xml
+```
 
  The CTM team would like to have an interface called Environment that encapsulates all the information about a tenant:
 
@@ -66,7 +66,7 @@ public interface Environment {
     int getMinSize();
     int getMaxSize();
 }
-```java
+```
 
   There is code in the system that would like to inject the Environment class.  However, the code that will inject
   this interface is in the Singleton scope, which means it never changes.  And yet, depending on the state of the system
@@ -86,7 +86,7 @@ public class ServiceProvisioningEngine {
    }
 
 }
-```java
+```
 
 We would like to demonstrate how a custom scope, called the TenantScope, can be used to solve this problem.  Firstly, in order
 to solve the problem of the Singleton service getting injected with the Environment only at construction time, we must have HK2
@@ -102,7 +102,7 @@ annotation to the definition of the scope annotation itself, like this:
 @Target( { TYPE, METHOD })
 public @interface TenantScoped {
 }
-```java
+```
  
 This annotation is now marked as a scope indicator (via the @Scope annotation) and as proxiable (via the @Proxiable annotation).  All
 objects that are injected from this scope will be given a proxy that uses the underlying machinery to determine the state of the system
@@ -125,7 +125,7 @@ public class TenantManager {
         return currentTenant;
     }
 }
-```java
+```
 
 OK, great, now we know how to change the current tenant that is running on the system.  But how do we make the system understand this?
 Well, since we decided that we were going to have a proxiable scope, we also need a corresponding implementation of the Context interface.
@@ -138,7 +138,7 @@ public class TenantScopedContext implements Context<TenantScoped> {
     @Inject
     private TenantManager manager;
     ...
-```java
+```
 
 Note that the implementation of Context is itself a service, in the Singleton scope (there is nothing that says a Context must be
 in the Singleton scope, but most probably would be).  The only rule is that a Context implementation cannot be in the same scope as
@@ -150,7 +150,7 @@ see what the implementation of the isActive method of the TenantScopedContext wo
     public boolean isActive() {
         return manager.getCurrentTenant() != null;
     }
-```java
+```
 
 That was pretty easy.  But now lets think about what the TenantScopeContext has to do.  It must keep the set of objects created
 per tenant.  For example, we do not want to create the Environment implementation for the Alice tenant more than once.  And
@@ -172,7 +172,7 @@ on the current tenant:
         
         return retVal;
     }
-```java
+```
 
 Based on this code, it is now easy to write the find method of the TenantScopedContext:
  
@@ -182,7 +182,7 @@ Based on this code, it is now easy to write the find method of the TenantScopedC
         
         return (T) mappings.get(descriptor);
     }
-```java
+```
 
 The method that does findOrCreate is also fairly simple to write now.  If it cannot find the service in the mapping
 for this tenant, then it must create one using the create method of the ActiveDescriptor, passing in the root.  The
@@ -202,7 +202,7 @@ passing in of the root allows for objects of scope PerLookup to be destroyed pro
         
         return (T) retVal;
     }
-```java
+```
 
 That is it for writing the Context implementation for the TenantScope!  At this point, objects will be created in the
 tenant scope only when no object has already been created for that tenant.  And when a tenant is switched, a new mapping
@@ -227,7 +227,7 @@ public class EnvironmentFactory implements Factory<Environment> {
     
     ...
 }
-```java
+```
 
 It is interesting to notice that the factory itself is a service in the Singleton scope, and hence can be injected with the
 TenantManager.  However, that does not mean that the EnvironmentFactory is producing objects into the Singleton scope, only that the
@@ -237,7 +237,7 @@ the produce method, like this:
 ```java
     @TenantScoped
     public Environment provide() {...}
-```java
+```
 
 In this example, we are going to use other ServiceLocator registry's in order to create the specific Environment objects that we need.
 We will have a new ServiceLocator registry for each tenant, and that new ServiceLocator will be responsible for instantiating
@@ -268,7 +268,7 @@ the mapping and the code that associates a particular ServiceLocator with the cu
     private ServiceLocator createNewLocator() {
         return generator.generateLocatorPerTenant(manager.getCurrentTenant());
     }
-```java
+```
 
 The job of the TenantLocatorGenerator is to create a new ServiceLocator based on the current tenant and populate it
 with values from a backing XML file.
@@ -283,7 +283,7 @@ with values from a backing XML file.
         for (Populator p : serviceLocator.<Populator>getAllServices(Populator.class)) {
             p.run(new ConfigParser(h));
         }
-```java
+```
 
 Then it is necessary to implement Populator service, as follows below. Note, Habitat is backed by ServiceLocator for tenant.
  
@@ -304,7 +304,7 @@ Then it is necessary to implement Populator service, as follows below. Note, Hab
 		    }
 		
 		}
-```java
+```
   
 The code of the produce method in the EnvironmentFactory is now straightforward:
 
@@ -315,7 +315,7 @@ The code of the produce method in the EnvironmentFactory is now straightforward:
         
         return locator.getService(Environment.class);
     }
-```java
+```
 
 Voila!  We have a fairly simple example of how to create a TenantContext that meets the original requirements.  We have
 created a TenantScope/TenantContext pair, and made sure it only creates objects when no object already exists for a certain
@@ -337,7 +337,7 @@ to be re-injected.  Here is the pseudo-code for the test:
     tenantManager.setCurrentTenant(TenantLocatorGenerator.BOB);
         
     // Validate that the engine is using the BOB tenant
-```java
+```
 
 The point of the test is to ensure that the Environment object passed into the ServiceProviderEngine is in fact getting switched
 when we switch the tenant from Alice to Bob.

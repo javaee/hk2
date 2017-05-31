@@ -36,7 +36,8 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Introduction to HK2
+Introduction to HK2
+-------------------
 
 This page describes the HK2 2.0 API, which is based on JSR-330 standard annotations.
 Also, Habitat has been replaced with a new interface called [ServiceLocator][servicelocator].
@@ -72,7 +73,7 @@ as a service you annotate your class with [@Service][service].
 @Service
 public class Foo {
 }
-```java
+```
 
 By default Foo will be advertised as itself and by any interfaces that are marked with [@Contract][contract].
 Lets make Foo an interface that is a Contract and create an implementation of Foo:
@@ -85,7 +86,7 @@ public interface Foo {
 @Service
 public class FooImpl implements Foo {
 }
-```java
+```
 
 The FooImpl class will be placed into the registry advertised under both FooImpl and Foo.
  
@@ -106,7 +107,7 @@ public class MobyDick implements Book {
 @Service @Named
 public class ParadiseLost implements Book {
 }
-```java
+```
 
 The two classes, MobyDick and ParadiseLost, will be added to the service registry with the names
 "MobyDick" and "ParadiseLost".  If you use the [Named][named]
@@ -134,7 +135,7 @@ public class RedColor implements Color {
 @Service @Yellow
 public class YellowColor implements Color {
 }
-```java
+```
 
 The Blue annotation is defined like this:
 
@@ -144,7 +145,7 @@ The Blue annotation is defined like this:
 @Target( { TYPE, METHOD, FIELD, PARAMETER })
 public @interface Blue {
 }
-```java
+```
 
 It is an exercise left up to the reader to implement the Red and Yellow annotations.
  
@@ -161,7 +162,7 @@ public class FooImpl implements Foo {
   
   ...
 }
-```java
+```
 
 Upon construction the book field will be filled in by HK2.  You can also inject into the constructor of FooImpl, or
 use an initializer method.  In both of those cases the constructor or method must be annotated with
@@ -180,7 +181,7 @@ public class FooImpl implements Foo {
       this.book = book;
   }
 }
-```java
+```
 
 Here is FooImpl implemented with initializer method injection:
  
@@ -195,7 +196,7 @@ public class FooImpl implements Foo {
       this.book = book;
   }
 }
-```java
+```
 
 In all three of the above cases (field injected, constructor injected or initializer method injected) the injection will occur
 prior to the postConstruct method of FooImpl.  In this example we use the injected book in the postConstruct method:
@@ -211,7 +212,7 @@ public class FooImpl implements Foo {
       book.doSomething();
   }
 }
-```java
+```
 
 ### Injection by name
 
@@ -227,7 +228,7 @@ public class FooImpl implements Foo {
   @Inject @Named("ParadiseLost")
   private Book paradiseLost;
 }
-```java
+```
 
 The implementation of Book given the name "MobyDick" will be injected into the mobyDick field, and the implementation of
 Book given the name "ParadiseLost" will be injected into the paradiseLost field.
@@ -256,7 +257,7 @@ public class ColorMixer {
       this.yellow = yellow;
    }
 }
-```java
+```
 
 Note that the qualifiers can go on the parameters of the initializer method addPrimaries.  In the above example the RedColor,
 BlueColor and YellowColor services will be injected into the proper fields of the initializer.
@@ -283,7 +284,7 @@ public class ColorMixer {
     @Inject @Yellow
     private Provider<Color> yellowProvider;
 }
-```java
+```
 
 This service can then get the color implementations later.  In this method of ColorMixer we create purple by getting the
 red and blue colors:
@@ -297,7 +298,7 @@ public class ColorMixer {
       return mix(redProvider.get(), blueProvider.get());
     }
 }
-```java
+```
 
 Note that if no-one ever makes a color that involves using yellow, that the YellowColor implementation class will never
 be created, since no-one ever called the [get][providerget] method of the yellowProvider field.
@@ -331,7 +332,7 @@ public class Library {
         return retVal;
     }
 }
-```java
+```
 
 Since [IterableProvider][iterableprovider] implements [Iterable][iterable] 
 it can be used in Java for/while loops, as demonstrated in the above example.
@@ -351,7 +352,7 @@ public class Library {
         return allBooks.named(name).get();
     }
 }
-```java
+```
 
 In the above example we call the [named][iterableprovidernamed] method [IterableProvider][iterableprovider]
 in order to select the book with the given name.
@@ -378,7 +379,7 @@ public class Library {
         return retVal;
     }
 }
-```java
+```
 
 The value passed into any [Iterable][iterable] injection point will be an
 instance of [IterableProvider][iterableprovider].

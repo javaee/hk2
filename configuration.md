@@ -119,7 +119,7 @@ public @interface ConfiguredBy {
         EAGER
     }
 }
-```java
+```
 
 HK2 services in the [ConfiguredBy][configuredby] scope are normal HK2 services in that they can have normal
 injection points and have all the other features of an HK2 service.  They are also able to inject configuration
@@ -166,7 +166,7 @@ public @interface Configured {
     }
 
 }
-```java
+```
 
 When placed on a java Field the name of the parameter can come from the name of the field.  However, when placed
 on a parameter of a constructor or a method the [Configured][configured] value field must be filled in with
@@ -185,7 +185,7 @@ being made use the [PreDynamicChange][predynamicchange] annotation on a method:
 @Target(METHOD)
 public @interface PreDynamicChange {
 }
-```java
+```
 
 To mark a method to run after dynamic changes are complete use the [PostDynamicChange][postdynamicchange] annotation
 on a method:
@@ -195,7 +195,7 @@ on a method:
 @Target(METHOD)
 public @interface PostDynamicChange {
 }
-```java
+```
 
 The methods marked with [PreDynamicChange][predynamicchange] or [PostDynamicChange][postdynamicchange] can take
 zero parameters or a single parameter that is a List&lt;PropertyChangeListener&gt;.  If the List version is used

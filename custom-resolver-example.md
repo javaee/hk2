@@ -61,7 +61,7 @@ HttpEventReceiver class:
             Logger logger) {
        //...
     }
-```java
+```
 
 The method receiveRequest takes the parameters rank, id, action and logger.  But the determination of what value rank, id and
 action should take will be determined by the index in the HttpParameter annotation.  Here is the definition of HttpParameter:
@@ -74,7 +74,7 @@ public @interface HttpParameter {
 
    public int value() default 0;
 }
-```java
+```
 
 The logger parameter of the receiveRequest method is just another service.  This service will come from the normal JSR-330
 resolver, but the other parameters will be determined from the HttpParameter annotation.  The determination of
@@ -94,7 +94,7 @@ the definition of **@AlternateInject** looks like this:
 @InjectionPointIndicator
 public @interface AlternateInject {
 }
-```java
+```
 
 When providing a custom injection annotation, you must also provide an implementation of the
 [InjectionResolver][injectionresolver] interface.  It is this
@@ -115,7 +115,7 @@ Here is how the AlternateInjectionResolver is defined:
 public class AlternateInjectResolver implements InjectionResolver<AlternateInject> {
     //...
 }
-```java
+```
 
 Implementations of [InjectionResolver][injectionresolver] are registered
 with HK2 like any other service, and like any other service they may be injected with other services in the system.
@@ -133,7 +133,7 @@ public class AlternateInjectResolver implements InjectionResolver<AlternateInjec
     @Inject @Named(InjectionResolver.SYSTEM_RESOLVER_NAME)
     private InjectionResolver<Inject> systemResolver;
 }
-```java
+```
 
 The system JSR-330 injection resolver is put into the registry with a specific name so that other injection resolvers
 can easily inject it using the @Named annotation.
@@ -153,7 +153,7 @@ public class HttpRequest {
 
     public void addElement(String element) {...}
 }
-```java
+```
 
 Because this is a request scoped object, the underlying values will change whenever the request has changed.  So our
 AlternateInjectResolver can inject an HttpRequest object and use it to get values whenever it detects an
@@ -179,7 +179,7 @@ public class Foo {
         //...
     }
 }
-```java
+```
 
 In the above code snippet the resolve method looks for an HttpParameter annotation on the particular parameter being
 injected.  If it does not find such an annotation it simply lets the system injection resolver do the resolution.
@@ -200,7 +200,7 @@ before returning the object.  Here is how that code works:
     if (String.class.equals(injecteeType)) {
         return fromRequest;
     }
-```java
+```
 
 That is it for the implementation of our custom injection resolver!  Every time the HttpEventReceiver
 class is instantiated its receiveRequest method will be called with the values from the current
@@ -226,7 +226,7 @@ In order to create such a scope/context, we first define the scope annotation, R
 @Target( { TYPE, METHOD })
 public @interface RequestScope {
 }
-```java
+```
 
  The context that goes along with that request scope must implement the
  [Context][context] interface.  The actual type of the [Context][context] parameterized type must be the
@@ -238,7 +238,7 @@ public @interface RequestScope {
 public class RequestContext implements Context<RequestScope> {
     //...
 }
-```java
+```
 
 Most implementations of [Context][context] are put into the Singleton
 scope, though this is not required.  An implementation of [Context][context]
@@ -269,7 +269,7 @@ public class Bar {
         return (U) requestScopedEntities.get(descriptor);
     }
 }
-```java
+```
 
 Since an implementation of [Context][context] is a service, it can be
 looked up by other services.  RequestContext has methods on it that allow some controller to tell it when
@@ -302,7 +302,7 @@ be destroyed.  Here are the methods on RequestContext that begin and end a reque
     public boolean isActive() {
         return inRequest;
     }
-```java
+```
 
 The startRequest method above sets the flag saying that the Request has begun.  Any new requests to
 find or create request scoped objects will be adding those objects to the requestScopedEntities map.  The
@@ -354,7 +354,7 @@ public class HttpServer {
         requestContext.stopRequest();
     }
 }
-```java
+```
 
 This mock HttpServer will be used by the test code to give the server requests from the network and to then end those requests.  The
 injected HttpRequest will be created anew in the HttpServer.startRequest  method when the RequestContext.startRequest() method is called.
@@ -374,7 +374,7 @@ public class RequestProcessor {
         return eventReciever;
     }
 }
-```java
+```
 
 We can now look at how the test code work.
 The test has a helper method that does the following:
@@ -405,7 +405,7 @@ Here is the test utility method:
         Assert.assertEquals(id, receiver.getLastId());
         Assert.assertEquals(event, receiver.getLastAction());
     }
-```java
+```
 
 After having this utility method, the test itself is very simple, and just ensures that the whole thing fits together nicely:
 
@@ -416,7 +416,7 @@ After having this utility method, the test itself is very simple, and just ensur
         doRequest(100, 2, "SecondRequest");
         doRequest(1000, 3, "ThirdRequest");
     }
-```java
+```
 
 ### Conclusion
 

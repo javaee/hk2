@@ -58,7 +58,7 @@ that is to be distributed to subscribers, the injection point for the [Topic][to
 ```java
     @Inject
     Topic<ImportantEvent> importantEventTopic;
-```java
+```
 
 The publish method of [Topic][topic] will distribute the message to the set of subscribers.  In this way
 the subscribers and the publishers need not have any previous knowledge of each other.
@@ -71,7 +71,7 @@ a qualifier):
 ```java
     @Inject @CodeRed
     Topic<ImportantEvent> importantEventTopic;
-```java
+```
 
 ### Pluggability
 
@@ -104,7 +104,7 @@ In order to enable the default [TopicDistributionService][topicdistributionservi
     public void initializeEvents(ServiceLocator locator) {
         ServiceLocatorUtilities.enableTopicDistribution(locator);
     }
-```java
+```
 
 The default [TopicDistributionService][topicdistributionservice] is named HK2TopicDistributionService
 and has a priority of 0.  It is possible to enhance the behavior of the default
@@ -133,7 +133,7 @@ The following methods are all subscribers to ImportantEvent:
   public void importantEventSubscriber(ServiceLocator locator, @SubscribeTo ImportantEvent event) {
     // Do something with this important event and with the ServiceLocator
   }
-```java
+```
 
 All three of the above methods will be called when a [Topic][topic] publish method is called with
 an ImportantEvent.
@@ -160,7 +160,7 @@ the CodeRed qualifier:
   public void codeRedSubscriber(@SubscribeTo @CodeRed ImportantEvent redEvent) {
     // do something with the code-red event
   }
-```java
+```
 
 If an injection point on a subscription method has scope PerLookup then the instance of
 that service will be disposed after the subscription method has returned.

@@ -36,7 +36,8 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-<h2>HK2 Metadata Generators</h2>
+HK2 Metadata Generators
+-----------------------
 
 There are two ways to generate hk2 metadata (called inhabitant files) that can be
 used by the runtime system to find hk2 services without having to classload those
@@ -55,7 +56,7 @@ build environment.
 + [HK2 Inhabitant Generator](inhabitant-generator.html#HK2_Inhabitant_Generator)
 + [Stub Generation](inhabitant-generator.html#Stub_Generation)
 
-<h3>HK2 Metadata Generator</h3>
+### HK2 Metadata Generator ###
 
 The HK2 Metadata Generator will generate hk2 inhabitant files during the compilation
 of your java files.  It is a JSR-269 annotation processor that handles the [@Service][service]
@@ -69,7 +70,7 @@ In this example we use the HK2 Metadata Generator in a Maven based build system:
       <groupId>org.glassfish.hk2</groupId>
       <artifactId>hk2-metadata-generator</artifactId>
   </dependency>
-```xml
+```
 
 Since Maven uses transitive dependencies this is all you need to add as a dependency during
 build.
@@ -88,7 +89,7 @@ dependencies {
   testCompile group: 'org.glassfish.hk2', name: 'hk2-api', version: '2.4.0-b14'
   testCompile group: 'org.glassfish.hk2', name: 'hk2-metadata-generator', version: '2.4.0-b14'
 }
-```java
+```
 
 <h4>HK2 Metadata Generator Options</h4>
 
@@ -101,9 +102,9 @@ this looks something like this:
 compileJava {
   options.compilerArgs << '-Aorg.glassfish.hk2.metadata.location=META-INF/hk2-locator/acme'
 }
-```java
+```
 
-<h3>HK2 Inhabitant Generator</h3>
+### HK2 Inhabitant Generator ###
 
 The HK2 Inhabitants Generator is a utility that will generate inhabitants file during the
 build of your JAR file.  It works by analyzing the classes that have been built by javac and
@@ -121,13 +122,13 @@ be used:
 + [Using Maven](inhabitant-generator.html#Using_Maven)
 + [Ant Task](inhabitant-generator.html#Ant_Task)
 
-<h3>Command Line Tool</h3>
+### Command Line Tool ###
 
 The HK2 Inhabitants Genertor can be run from the command line like this:
  
 ```java
 java org.jvnet.hk2.generator.HabitatGenerator
-```java
+```
 
 By default the [HabibatGenerator][habitatgenerator] will attempt to analyze the first element of the classpath
 and replace that element (if it is a JAR) with a new JAR that has an inhabitants file in
@@ -160,7 +161,7 @@ The --verbose option make the generator print extra information as it does its w
 This command line utility will call **System.exit** when it is done with a 0 code if it was able
 to work properly and a non-zero value if it failed in some way.
  
-<h3>Embedded Usage</h3>
+### Embedded Usage ###
 
 The class [org.jvnet.hk2.generator.HabitatGenerator][habitatgenerator] has a static method on called embeddedMain.
 The embeddedMain takes the typical argv[] array of parameters and so has the same behavior
@@ -171,7 +172,7 @@ System.exit().  See the [javadoc][habitatgenerator] for more information.
 Using embeddedMain is useful if you want to build your own build tools that generate inhabitants
 files for your own IDE or other build environment.
  
-<h3>Using Maven</h3>
+### Using Maven ###
 
 The HabitatGenerator is also available as a Maven plugin.  It has a single goal, called
 generateInhabitants that is run in the process-classes phase by default.  Using this plugin
@@ -180,7 +181,7 @@ in your build will cause inhabitants files to be generated in your output direct
 The following example plugin snippet from a pom.xml will run the InhabitantsGenerator in
 both the main tree and in the test tree, in case you would like your test sources to also
 be analyzed for classes marked with [@Service][service].
- 
+
 ```xml
     <plugin>
       <groupId>org.glassfish.hk2</groupId>
@@ -194,7 +195,7 @@ be analyzed for classes marked with [@Service][service].
         </execution>
       </executions>
     </plugin>
-```xml
+```
 
  The plugin has the following configuration options:
  
@@ -205,7 +206,7 @@ be analyzed for classes marked with [@Service][service].
 + locator The name of the locator file (which is \"default\" by default)
 + noswap (true or false) if set to true the generator will overwrite files in place which is riskier but faster
   
-<h3>Ant Task</h3>
+### Ant Task ###
 
 The inhabitant generator can also be used as an ant task.  The ant task is org.jvnet.hk2.generator.maven.ant.HK2InhabitantGeneratorTask.
 Below find an example ant file that uses the task:
@@ -225,7 +226,7 @@ Below find an example ant file that uses the task:
     <hk2-inhabitant-generator targetDirectory="${build}"/>
   </target>
 </project>
-```xml
+```
 
 The thing to note in the example above is that the hk2-inhabitant-generator must run after the classes are built, as the hk2-inhabitant-generator
 inspects the class files.
@@ -238,7 +239,7 @@ The ant plugin has the following options:
 + locator The name of the locator file (which is \"default\" by default)
 + noswap (true or false) if set to true the generator will overwrite files in place which is riskier but faster
 
-<h3>Stub Generation</h3>
+### Stub Generation ###
 
 The HK2 metadata generator can also generate implementation classes based on abstract classes.  This is useful
 when testing, as it is often the case in tests that the user would like to replace some service with one
@@ -267,7 +268,7 @@ public interface ManyMethodsService {
   public String methodBar(String input);
   // And so on
 }
-```java
+```
 
 Somewhere in your build there is an implementation of ManyMethodsService.  It may or may not look like this:
 
@@ -276,7 +277,7 @@ Somewhere in your build there is an implementation of ManyMethodsService.  It ma
 public class ManyMethodsServiceImpl implements ManyMethodsService {
   // Here we really implement the interface, possibly doing JDBC or other possibly heavy operations
 }
-```java
+```
 
 However, in the test environment there is only one or two methods that the test touches.  In this case
 we can very easily use the [Stub][stub] annotation to tell the hk2-metadata-generator to generate an
@@ -298,7 +299,7 @@ public abstract class TestManyMethodsService implements ManyMethodsService {
   
   // Do not implement the other methods in the interface
 }
-```java
+```
 
 If the hk2-metadata-generator is in the classpath of the test build then it will see the [Stub][stub]
 annotation and will generate a java file with the unimplemented methods implemented, returning
@@ -314,7 +315,7 @@ used will be the value of the class with [Stub][stub] on it.  For example this c
 @Stub @Named
 public abstract class AliceService implements SomeInterface {
 }
-```java
+```
 
 will end up having the name \"AliceService\", while this class:
 
@@ -322,7 +323,7 @@ will end up having the name \"AliceService\", while this class:
 @Stub @Named("Bob")
 public abstract class AliceService implements SomeInterface {
 }
-```java
+```
 
 will end up having the name \"Bob\".  Only the [@Named][named] qualifier is treated
 specially in this way.
@@ -336,7 +337,7 @@ be done by setting the value field of the [Stub][stub] to EXCEPTIONS, like this:
 public abstract class AliceService implements SomeInterface {
   // All generated methods will throw UnsupportedOperationException
 }
-```java
+```
 
 This can be useful when writing tests to ensure that the code does not inadvertently use one of the
 methods of the stub's implementation.

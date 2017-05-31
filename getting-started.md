@@ -36,12 +36,13 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-<h2> Getting started</h2>
+Getting started
+---------------
 
 - [Maven build](getting-started.html#Maven_Build)
 - [Automatic Service Population](getting-started.html#Automatic_Service_Population)
 
-<h3>Maven Build</h3>
+### Maven Build ###
 
 The best way to use HK2 in your builds is to add the following dependency in your maven build:
 
@@ -60,7 +61,7 @@ The best way to use HK2 in your builds is to add the following dependency in you
       </dependency>
     </dependencies>
 </project>
-```xml
+```
 
 The org.glassfish.hk2:hk2 dependency has a dependency on all of the HK2 jars.
 However, this may be more than you want, since it includes configuration, 
@@ -82,7 +83,7 @@ If instead you wanted the absolute minimum working profile for hk2 you would ins
       </dependency>
     </dependencies>
 </project>
-```xml
+```
 
 The hk2-locator project contains the implementation of the hk2 API, with
 no other bells and whistles.  In particular, the ability to automatically
@@ -90,7 +91,7 @@ detect services is not available, and so all HK2 objects must be added
 programmatically and gotten with the HK2 API.  However, the above is perfect
 for small projects that want to play with the HK2 API to see how it works.
 
-<h3>Automatic Service Population</h3>
+### Automatic Service Population ###
 
 In order for HK2 to automatically find services at runtime it can read files called inhabitant files.
  These are usually placed in your JAR file at location META-INF/hk2-locator.
@@ -114,7 +115,7 @@ use the [createAndPopulateServiceLocator][createandpopulateservicelocator] metho
       
       ...
   }
-```java
+```
 
 [servicelocator]: apidocs/org/glassfish/hk2/api/ServiceLocator.html
 [inhabitant-generator]: inhabitant-generator.html

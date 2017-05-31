@@ -72,7 +72,7 @@ It looks like this:
     <adminPort>10001</adminPort>
   </web-server>
 </application>
-```xml
+```
 
 ### The Example Application
 
@@ -117,7 +117,7 @@ public interface WebServerBean {
     public int getPort();
     public void setPort(int port);
 }
-```java
+```
 
 XmlAttribute and XmlElement are standard JAXB annotations that would normally only go onto concrete classes.
 [XmlIdentifier][xmlidentifier] and [Hk2XmlPreGenerate][hk2xmlpregenerate] are HK2 extensions that will be 
@@ -161,7 +161,7 @@ public interface ApplicationBean {
     public WebServerBean lookupWebServers(String findMe);
 
 }
-```java
+```
 
 The ApplicationBean has a standard JAXB getter and setter for the WebServerBean which is annotated with the
 JAXB standard annotation XmlElement.  Note that like all JAXB annotations the annotation can be placed
@@ -195,7 +195,7 @@ and then initializes the [XmlService][xmlservice] using the [XmlServiceUtilities
         
         XmlServiceUtilities.enableXmlService(testLocator);
     }
-```java
+```
 
 The testLocator is from the [HK2Runner][hk2runner] and is available after the initialize call,
 which is also responsible for injecting the [XmlService][xmlservice] provider so that it
@@ -204,7 +204,7 @@ can be used by the individual tests:
 ```java
     @Inject
     private Provider<XmlService> xmlServiceProvider;
-```java
+```
 
 We can now look at how to unmarshall the XML into the ApplicationBean in the first test
 in WebServerXmlTest:
@@ -248,7 +248,7 @@ in WebServerXmlTest:
             Assert.assertEquals(81, externalServer.getSSLPort());
         }
      }
-```java
+```
 
 The XML file has been unmarshalled into the ApplicationBean and into the three children WebServerBeans.
 Note that even the default values have been filled into the getPort and setSSLPort methods from
@@ -301,7 +301,7 @@ public class WebServerManager {
         return allWebServers.named(name).get();
     }
 }
-```java
+```
 
 The test file for this use case is WebServersAsHK2ServicesTest and is mostly the
 same as the previous example.  In this case the test gets the WebServerManager
@@ -346,7 +346,7 @@ WebServerBean are as expected:
             Assert.assertEquals(81, externalServer.getSSLPort());
         }
     }
-```java
+```
 
 Of course a service can always just use javax.inject.Named to inject a specific WebServerBean if
 wants to hard-code the name in the code.

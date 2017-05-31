@@ -64,7 +64,7 @@ public class MyService {
     return true;
   }
 }
-```java
+```
 
 ### Indicating Interceptors
 
@@ -89,7 +89,7 @@ contracts.  Here is an example of a method interceptor:
 public class MyMethodInterceptor implements MethodInterceptor {
   // ...
 }
-```java
+```
 
 Here is an example of a constructor interceptor:
 
@@ -100,7 +100,7 @@ Here is an example of a constructor interceptor:
 public class MyConstructorInterceptor implements ConstructorInterceptor {
   // ...
 }
-```java
+```
 
 ### Interception Bindings
 
@@ -119,7 +119,7 @@ For example, if the user has a security interceptor, they might define their ann
 @Documented
 public @interface Secure {
 }
-```java
+```
 
 They would then put that annotation both on the security interceptor like so:
 
@@ -131,7 +131,7 @@ They would then put that annotation both on the security interceptor like so:
 public class SecurityInterceptor implements MethodInterceptor, ConstructorInterceptor {
   // ...
 }
-```java
+```
 
 Then any method or constructor on an intercepted service that needs to be secure
 would add the @Secure annotation as well:
@@ -151,7 +151,7 @@ public class KernelSanders {
     return secretFormula;
   }
 }
-```java
+```
 
 The user annotation that is marked with [InterceptionBinder][interceptionbinder] can
 also be placed on the service that is intercepted in order to indicate that all
@@ -166,7 +166,7 @@ with matching annotations.  For example if the user annotation is this:
 @Documented
 public @interface Trace {
 }
-```java
+```
 
 Then the intercepted service can put Trace at the class level to indicate that all
 methods should be traced:
@@ -177,7 +177,7 @@ methods should be traced:
 @Trace
 public class LoudService {
 }
-```java
+```
 
 If there is a corresponding interceptor that is marked with the Trace annotation then all
 methods and/or constructors of the LoudService will be traced.
@@ -195,7 +195,7 @@ Secure and Trace annotations:
 @Documented
 public @interface SecurelyTraceable {
 }
-```java
+```
 
 ### Interceptor Ordering and Customization
 
