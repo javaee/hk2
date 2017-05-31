@@ -1,3 +1,0 @@
-[test.MyTest]
-contract={test.MyTest}
-scope=javax.inject.Singleton

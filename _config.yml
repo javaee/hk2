@@ -1,0 +1,16 @@
+theme: jekyll-theme-architect
+
+title: HK2 - Dependency Injection Kernel
+description: A light-weight and dynamic dependency injection framework
+
+# sidebar links url
+links:
+  download: http://repo1.maven.org/maven2/org/glassfish/hk2/
+  source: https://github.com/hk2-project/hk2
+  #mailinglist:
+  #javadocs:
+  #docs:
+  #faq:
+  #mailinglist:
+  #hide_issuetracker: true #set explicitly to 'true' if you don't want to have the issue tracker link displayed
+

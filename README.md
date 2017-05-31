@@ -1,42 +1,62 @@
-[//]: # " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER. "
-[//]: # "  "
-[//]: # " Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved. "
-[//]: # "  "
-[//]: # " The contents of this file are subject to the terms of either the GNU "
-[//]: # " General Public License Version 2 only (''GPL'') or the Common Development "
-[//]: # " and Distribution License(''CDDL'') (collectively, the ''License'').  You "
-[//]: # " may not use this file except in compliance with the License.  You can "
-[//]: # " obtain a copy of the License at "
-[//]: # " https://oss.oracle.com/licenses/CDDL+GPL-1.1 "
-[//]: # " or LICENSE.txt.  See the License for the specific "
-[//]: # " language governing permissions and limitations under the License. "
-[//]: # "  "
-[//]: # " When distributing the software, include this License Header Notice in each "
-[//]: # " file and include the License file at LICENSE.txt. "
-[//]: # "  "
-[//]: # " GPL Classpath Exception: "
-[//]: # " Oracle designates this particular file as subject to the ''Classpath'' "
-[//]: # " exception as provided by Oracle in the GPL Version 2 section of the License "
-[//]: # " file that accompanied this code. "
-[//]: # "  "
-[//]: # " Modifications: "
-[//]: # " If applicable, add the following below the License Header, with the fields "
-[//]: # " enclosed by brackets [] replaced by your own identifying information: "
-[//]: # " ''Portions Copyright [year] [name of copyright owner]'' "
-[//]: # "  "
-[//]: # " Contributor(s): "
-[//]: # " If you wish your version of this file to be governed by only the CDDL or "
-[//]: # " only the GPL Version 2, indicate your decision by adding ''[Contributor] "
-[//]: # " elects to include this software in this distribution under the [CDDL or GPL "
-[//]: # " Version 2] license.''  If you don't indicate a single choice of license, a "
-[//]: # " recipient has the option to distribute your version of this file under "
-[//]: # " either the CDDL, the GPL Version 2 or to extend the choice of license to "
-[//]: # " its licensees as provided above.  However, if you add GPL Version 2 code "
-[//]: # " and therefore, elected the GPL Version 2 license, then the option applies "
-[//]: # " only if the new code is made subject to such option by the copyright "
-[//]: # " holder. "
 
-hk2
-===
 
-A light-weight and dynamic dependency injection framework
+# About
+
+{{site.title}} is a simple demo site. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor ut labore et dolore aliqua. Ut enim ad minim veniam, quis exercitation ullamco laboris nisi ut aliquip.
+
+
+Lorem ipsum dolor sit amet again! Consectetur adipiscing elit, sed do eiusmod tempor ut labore et dolore aliqua. Ut enim ad minim veniam, quis exercitation ullamco laboris nisi.
+  
+## Somes tables
+
+| File  | Description |
+| :---: | :--- |
+| [javax.mail.jar](https://github.com/javaee/javamail/releases/download/JAVAMAIL-1_5_6/javax.mail.jar)  | The JavaMail reference implementation, including the SMTP, IMAP, and POP3 protocol providers  |
+| [README.txt](https://bshannon.github.io/test/docs/README.txt) | Overview of the release |
+| [NOTES.txt](https://bshannon.github.io/test/docs/NOTES.txt)	|Additional notes about using JavaMail  |
+| [SSLNOTES.txt](https://bshannon.github.io/test/docs/SSLNOTES.txt)	|Notes on using SSL/TLS with JavaMail  |
+
+|jar file|gropuId|artifactId|Description|
+| :---: | :---: |  :---: | :--- | 
+| javax.mail.jar | com.sun.mail | javax.mail | The JavaMail reference implementation jar file, including the SMTP, IMAP, and POP3 protocol providers |
+| javax.mail-api.jar | javax.mail | javax.mail-api | The JavaMail API definitions only, suitable for compiling against |
+| mailapi.jar | com.sun.mail | mailapi | The JavaMail reference implementation with no protocol providers; use with one of the following providers |
+| smtp.jar | com.sun.mail | smtp | The SMTP protocol provider |
+
+# Some examples
+
+* Fix the bug
+* Test the fix
+* Push my commits to GitHub
+  
+1. France  
+1.1 Paris  
+2.1 Nice  
+2. USA  
+2.1 New York  
+2.2 San Francisco 
+
+> This is a multi line block quote  
+and this is the end. 
+
+
+## April 10th, 2017 - JAX-RS PATCH support (client API) ##
+
+PATCH support has been added to JAX-RS API 2.1 in milestone 6, see [here](https://java.net/projects/jax-rs-spec/lists/users/archive/2017-04/message/40).
+Check the [contribute](contribute) page which is a full page.
+
+```java
+/**
+ * Indicates that the annotated method responds to HTTP PATCH requests.
+ *
+ * @author Pavel Bucek (pavel.bucek at oracle.com)
+ * @see HttpMethod
+ * @since 2.1
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@HttpMethod(HttpMethod.GET)
+@Documented
+public @interface PATCH {
+}
+```
