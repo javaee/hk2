@@ -7,11 +7,10 @@ description: A light-weight and dynamic dependency injection framework
 links:
   download: http://repo1.maven.org/maven2/org/glassfish/hk2/
   source: https://github.com/hk2-project/hk2
-  #mailinglist:
+  mailinglist: https://javaee.groups.io/g/hk2
   #javadocs:
   #docs:
   #faq:
-  #mailinglist:
   #hide_issuetracker: true #set explicitly to 'true' if you don't want to have the issue tracker link displayed
 
 gems:
