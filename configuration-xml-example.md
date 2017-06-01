@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## XML Configuration Example
+* TOC
+{:toc}
+
+# XML Configuration Example
 
 This page shows an example of how to use the HK2 XML configuration service in order to inject
 values into HK2 services from an XML file.
@@ -74,7 +77,7 @@ It looks like this:
 </application>
 ```
 
-### The Example Application
+## The Example Application
 
 This application will have three web servers started.  The properties of each of the servers is defined in the XML file.
 The HK2 XML Service uses JAXB to parse XML files.  In most JAXB applications the users must supply an
@@ -177,7 +180,7 @@ input to setWebServers but we could have also used a qualified java.util.List.
 
 NOTE:  At the current time there is no support for plurals.  This is a bug that should be fixed.
 
-### [XmlService][xmlservice]
+## [XmlService][xmlservice]
 
 Now we need to parse our XML into these Java Beans.  To do this we use the [XmlService][xmlservice].
 You add the XmlService to any locator by using the method enableXmlService in
@@ -267,7 +270,7 @@ into your application.  They are:
 
 The following two sections will explain each option.
 
-### Unmarshalled Java Beans as HK2 services
+## Unmarshalled Java Beans as HK2 services
 
 When you unmarshall XML with the [XmlService][xmlservice] unmarshall method and the interfaces
 in the Java Bean tree are marked with [Contract][contract] then those beans will be
@@ -346,12 +349,12 @@ WebServerBean are as expected:
             Assert.assertEquals(81, externalServer.getSSLPort());
         }
     }
-```
+```s
 
 Of course a service can always just use javax.inject.Named to inject a specific WebServerBean if
 wants to hard-code the name in the code.
 
-### An HK2 Service Per web-server XML stanza
+## An HK2 Service Per web-server XML stanza
 
 In the next example the system will generate a new WebServer for every web-server XML stanza
 in the file, and will inject that WebServer with the values found from that stanza.

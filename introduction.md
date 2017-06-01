@@ -36,22 +36,13 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-Introduction to HK2
--------------------
+* TOC
+{:toc}
+
+# Introduction to HK2
 
 This page describes the HK2 2.0 API, which is based on JSR-330 standard annotations.
 Also, Habitat has been replaced with a new interface called [ServiceLocator][servicelocator].
-
-+ [Getting Started](introduction.html#Getting_Started)
-+ [Named Services](introduction.html#Named_Services)
-+ [Qualified Services](introduction.html#Qualified_Services)
-+ [Basic Injection](introduction.html#Basic_Injection)
-+ [Injection by name](introduction.html#Injection_by_name)
-+ [Injection by qualifier](introduction.html#Injection_by_qualifier)
-+ [Provider injection](introduction.html#Provider_injection)
-+ [IterableProvider injection](introduction.html#IterableProvider_injection)
-+ [Iterable injection](introduction.html#Iterable_injection)
-+ [Conclusion](introduction.html#Conclusion)
 
 HK2 is a declarative framework for services using annotations like [Contract][contract] and [Service][service].
 This page is intended to show simple usages of HK2 mainly using the standard JSR-330 API.
@@ -64,7 +55,7 @@ This page assumes that you are using the HK2 provided ability to automatically f
 register services in an HK2 registry.  For more information on how to control what services
 are automatically bound to what registries see TBD.
 
-### Getting Started
+## Getting Started
 
 In order to mark a concrete implementation class as one that should be available 
 as a service you annotate your class with [@Service][service].
@@ -90,7 +81,7 @@ public class FooImpl implements Foo {
 
 The FooImpl class will be placed into the registry advertised under both FooImpl and Foo.
  
-### Named Services
+## Named Services
  
 In order to differentiate different implementations of the same interface you can name your services.
 Here is an example of a class that implements a contract and has two implementations, both named differently:
@@ -113,7 +104,7 @@ The two classes, MobyDick and ParadiseLost, will be added to the service registr
 "MobyDick" and "ParadiseLost".  If you use the [Named][named]
 qualifier without specifying a name then the name you get is the class name without the package.
  
-### Qualified Services
+## Qualified Services
 
 Services can also be qualified with annotations called qualifiers.  Qualifiers are annotations that are themselves
 annotated with [@Qualifier][qualifier].  Here is an
@@ -149,7 +140,7 @@ public @interface Blue {
 
 It is an exercise left up to the reader to implement the Red and Yellow annotations.
  
-### Basic Injection
+## Basic Injection
 
 Lets make our example a little more interesting by injecting a book into Foo.  This is done using the
 JSR-330 standard [Inject][inject] annotation:
@@ -214,7 +205,7 @@ public class FooImpl implements Foo {
 }
 ```
 
-### Injection by name
+## Injection by name
 
 The astute observer of our example will have noticed that when injecting a Book into FooImpl that we never selected which book we wanted.
 That can be fixed by using the [Named][named] qualifier at the point of injection.  Lets fix the example by injecting both of the Books we defined earlier:
@@ -233,7 +224,7 @@ public class FooImpl implements Foo {
 The implementation of Book given the name "MobyDick" will be injected into the mobyDick field, and the implementation of
 Book given the name "ParadiseLost" will be injected into the paradiseLost field.
  
-### Injection by qualifier
+## Injection by qualifier
 
 Injections can also be more specifically chosen by using qualifiers.  In the previous example we created three implementations
 of Color, each of which was qualified with a qualifier.  Here we create a class called ColorMixer which injects the colors
@@ -262,7 +253,7 @@ public class ColorMixer {
 Note that the qualifiers can go on the parameters of the initializer method addPrimaries.  In the above example the RedColor,
 BlueColor and YellowColor services will be injected into the proper fields of the initializer.
  
-### Provider injection
+## Provider injection
 
 There are times when your code would like finer control over when a instance of a service is created.
 Anywhere that you can inject a service, you can also inject a [Provider][atinjectprovider].
@@ -306,7 +297,7 @@ be created, since no-one ever called the [get][providerget] method of the yellow
 The value passed into any [Provider][provider] injection point will be an
 instance of [IterableProvider][iterableprovider].
  
-### IterableProvider injection
+## IterableProvider injection
 
 It is often the case that a single contract has more than one implementation.  Sometimes it is useful to get access to
 all of the implementations of the contract.
@@ -358,7 +349,7 @@ In the above example we call the [named][iterableprovidernamed] method [Iterable
 in order to select the book with the given name.
 The call to [get][providerget] then just returns the book with the given name.
 
-### Iterable injection
+## Iterable injection
 
 [Iterable][iterable] can be used as an injection point rather than [IterableProvider][iterableprovider].  The following code will
 work as expected:
@@ -384,7 +375,7 @@ public class Library {
 The value passed into any [Iterable][iterable] injection point will be an
 instance of [IterableProvider][iterableprovider].
  
-### Conclusion
+## Conclusion
 
 The majority of usages of HK2 should use standard JSR-330 annotations along with
 [@Service][service] and [@Contract][contract].

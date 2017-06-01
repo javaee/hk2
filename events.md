@@ -36,19 +36,16 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Events
+* TOC
+{:toc}
+
+# Events
 
 The HK2 event service provides a pluggable mechanism that allows delivery of messages from service to
 service.  Those services sending events are called publishers and those receiving events are called
 subscribers.  A message can be any java object.
 
-+ [Topics](events.html#Topics)
-+ [Pluggability](events.html#Pluggability)
-+ [The Default TopicDistributionService](events.html#The_Default_TopicDistributionService)
-+ [Subscribers](events.html#Subscribers)
-+ [Conclusion](events.html#Conclusion)
-
-### Topics
+## Topics
 
 A [Topic][topic] is a special HK2 service that can be injected into a service or can be looked up from
 a [ServiceLocator][servicelocator].  It normally is injected as a ParameterizedType, where the generic
@@ -73,7 +70,7 @@ a qualifier):
     Topic<ImportantEvent> importantEventTopic;
 ```
 
-### Pluggability
+## Pluggability
 
 In order to provide maximum flexibility in terms of qualities of service between publishers and
 subscribers the HK2 event subsystem is pluggable.  This means that when a message is published
@@ -95,7 +92,7 @@ Type of the [Topic][topic] and all of its associated qualifiers.
 HK2 provides a default implementation of [TopicDistributionService][topicdistributionservice]
 which will be described in the sections below.
 
-### The Default TopicDistributionService
+## The Default TopicDistributionService
 
 In order to enable the default [TopicDistributionService][topicdistributionservice] the
 [ServiceLocatorUtilities][servicelocatorutilities] method enableTopicDistribution should be called:
@@ -114,7 +111,7 @@ the default [TopicDistributionService][topicdistributionservice].  Then the defa
 can be delegated to by the custom enhanced [TopicDistributionService][topicdistributionservice].
 An example of how to do this is given [here][threaded-events-example].
 
-### Subscribers
+## Subscribers
 
 In the HK2 default system subscribers are found by finding methods on services that have a
 single parameter annotated with [@SubscribeTo][subscribeto].  Any other parameters of the
@@ -165,7 +162,7 @@ the CodeRed qualifier:
 If an injection point on a subscription method has scope PerLookup then the instance of
 that service will be disposed after the subscription method has returned.
 
-### Conclusion
+## Conclusion
 
 Events can help your application have low cohesion, as subscribers and publishers need not
 have any relationship other than agreeing on an event Type.  HK2 provides a powerful mechanism

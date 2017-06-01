@@ -36,16 +36,15 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Threaded Events Example
+* TOC
+{:toc}
+
+# Threaded Events Example
 
 This example will enhance the existing default HK2 event mechanism to deliver events to subscribers on a different thread from
 the publisher.
 
-+ [The Strategy](threaded-events-example.html#The_Strategy)
-+ [Testing](threaded-events-example.html#Testing)
-+ [Conclusion](threaded-events-example.html#Conclusion)
-
-### The Strategy
+## The Strategy
 
 The strategy for modifying the default behavior of the HK2 default eventing mechanism is to write our own implementation of
 [TopicDistributionService][topicdistributionservice] that uses the HK2 default service to delegate to in a different
@@ -82,7 +81,7 @@ public class ThreadedEventDistributor implements TopicDistributionService {
         }
     }
 }
-```java
+```
 
 Lets take a look at this service in detail.  It is a service so it is annotated with [@Service][service].  By default an
 service annototated with [@Service][service] is put into the Singleton scope, so the @Singleton annotation is not necessary,
@@ -104,7 +103,7 @@ is being called on a separate thread than the caller.
 This is a useful extension if it is known that the subscriber might do something that takes a long time in its method or if there
 are other reasons to use a separate thread.
 
-### Testing
+## Testing
 
 The test code is very simple and just verifies that the subscriber is in fact on a different thread than the caller.  It does this
 by recording the thread id in its object.  The test then verifies that the thread id of the publisher and the thread id of the
@@ -151,7 +150,7 @@ public class EventSubscriberService {
     }
 
 }
-```java
+```
 
 The publisher is very simple, just calling the publish method of the [Topic][topic] with a new Event:
 
@@ -167,7 +166,7 @@ public class EventPublisherService {
         eventPublisher.publish(new Event());
     }
 }
-```java
+```
 
 Here we can see the test, which simply ensures that the thread id of the publisher is not the same as the thread id
 of the subscriber:
@@ -197,9 +196,9 @@ of the subscriber:
         Assert.assertNotSame("Should have had different threadId from " + myThreadId,
                 myThreadId, subscriberThreadId);
     }
-```java
+```
 
-### Conclusion
+## Conclusion
 
 In this example we have shown how to override and enhance the default HK2 messaging provider.  The quality of service
 has been changed from being single threaded on the thread of the publisher to having the subscribers invoked on

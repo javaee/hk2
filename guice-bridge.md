@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## The Guice/HK2 Bridge
+* TOC
+{:toc}
+
+# The Guice/HK2 Bridge
 
 The Guice/HK2 Bridge can be used to inject [Guice][guice] services
 into HK2 services or inject HK2 services into [Guice][guice] services.
@@ -47,12 +50,12 @@ It can be used bi-directionally as well.
 + [Injecting HK2 services into Guice services](guice-bridge.html#Injecting_HK2_services_into_Guice_services)
 + [Bi-Directional HK2 Guice Bridge](guice-bridge.html#Bi-Directional_HK2_Guice_Bridge)
 
-### Definitions
+## Definitions
 
 + A [Guice][guice] service is a service that is instantiated (created) by [Guice][guice]
 + An HK2 service is a service that is instantiated (created) by HK2
 
-### Injecting Guice services into HK2 services
+## Injecting Guice services into HK2 services
 
 [Guice][guice] services can be injected into any injection point in HK2.
 In order to do this you must tell HK2 about the [Guice][guice] [Injector][injector] 
@@ -95,7 +98,7 @@ For example, if you have a service called GuiceService that is created by [Guice
   }
 ```
 
-### Injecting HK2 services into Guice services
+## Injecting HK2 services into Guice services
 
 HK2 services can be injected into [Guice][guice] services.
 In order to do so, you must use the [HK2Inject][hk2inject] injection annotation.
@@ -126,7 +129,7 @@ Any [Guice][guice] service that can be created with this [Injector][injector]
 will now search the provided [ServiceLocator][servicelocator] 
 when it encounters a service that is injected with the [HK2Inject][hk2inject] annotation.
   
-### Bi-Directional HK2 Guice Bridge
+## Bi-Directional HK2 Guice Bridge
 
 [Guice][guice] and HK2 can bridge back and forth between each other.
 The following code example shows how you could accomplish such a thing:

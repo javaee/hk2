@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Configuration Example
+* TOC
+{:toc}
+
+# Configuration Example
 
 This page shows an example of how to use the HK2 configuration service in order to inject
 values into HK2 services from a properties file.  It is designed to show how end users
@@ -49,7 +52,7 @@ changed while the web server is up and running, but the admin port cannot.  The 
 can also be associated with one or more SSL certificates and private keys, which are themselves
 configured.  In this specific example the web server is associated with two SSL certificates.
 
-### The Web Server
+## The Web Server
 
 Lets first take a look at the Web Server.  The Web Server service implements this HK2 [Contract][contract]:
 
@@ -326,7 +329,7 @@ there is this injection point:
 
 Let us look in detail at the SSLCertificateService to more fully understand the above usage.
 
-### The SSLCertificateService
+## The SSLCertificateService
 
 SSLCertificateService is an HK2 service that deals with SSL certificates.  This is the full implementation of the service: 
 
@@ -368,7 +371,7 @@ be found below in the discussion about how the property file is translated into 
 This injection point will be able to get all of the configured SSKCertificateService instances created.  So if there are two SSLCertificateBeans
 in the [Hub][hub] then this iterator will return two SSLCertificateServices.
 
-### Configuring the Services
+## Configuring the Services
 
 This example has a specific configuration that it will read and then modify to ensure that the system is working properly.  The initial
 property file for the example can be found here:
@@ -462,7 +465,7 @@ and read in again the propertyFileHandle would know which values had changed, wh
 were added and which instances were removed (which is the difficult part of the whole
 thing!).
 
-### Dynamic changes
+## Dynamic changes
 
 In this example we simply modify the Properties object itself rather than reading a second file for
 simplicity.  This is the test code that changes the properties and then tells hk2 about the
@@ -485,7 +488,7 @@ The propertyFileHandle will notice the changes and inform the [Hub][hub], which 
 WebServerImpl about the modified dynamic properties.  Even though the adminPort has changed the WebServerImpl
 will NOT be notified about that parameter changing because that field is NOT marked as being dynamic.
 
-### Initialization and setup
+## Initialization and setup
 
 In order to use the various parts of the HK2 configuration subsystem they must be initialized.  This is
 done via static methods on helper classes.  This is the test initialization code (junit @Before block):
@@ -526,7 +529,7 @@ done with a simple call to addClasses:
 
 The @Before block of the test code has now setup HK2 for the test run.
 
-### Running the test
+## Running the test
 
 This is the full test that shows that the WebServerImpl is properly running and gets the proper values from the
 properties file:
@@ -620,7 +623,7 @@ properties file:
     }
 ```
 
-### Final thoughts
+## Final thoughts
 
 This example is a simple demonstration of the HK2 configuration subsystem from an end-user perspective.  The end-users write
 HK2 services such as WebServerImpl and SSLCertificateService.  They annotate those services with [ConfiguredBy][configuredby]

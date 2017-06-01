@@ -36,41 +36,24 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Extensibility
+* TOC
+{:toc}
+
+# Extensibility
 
 
-### Compatibility
+## Compatibility
 
 This page describes the features of the HK2 2.0 API.  The Habitat API
 from version 1.x of HK2 has been replaced with a new interface called
 [ServiceLocator][servicelocator]. More information can be found [here][apioverview].
 
-### Features of HK2
+## Features of HK2
 
 HK2 has many features for customizing the system.  This page is intended to give an
 overview of each feature.  Among the set of HK2 features are:
 
-+ [Adding a Scope and Context to the system](extensibility.html#Adding_a_Scope_and_Context_to_the_system)
-+ [PerThread Scope](extensibility.html#PerThread_Scope)
-+ [InheritableThread Scope](extensibility.html#InheritableThread_Scope)
-+ [Security](extensibility.html#Security)
-+ [Proxies](extensibility.html#Proxies)
-+ [ClassLoading](extensibility.html#ClassLoading)
-+ [Custom Injection Resolvers](extensibility.html#Custom_Injection_Resolvers)
-+ [Just in Time Injection Resolver](extensibility.html#Just_in_Time_Injection_Resolver)
-+ [Events](extensibility.html#Events)
-+ [Instance Lifecycle](extensibility.html#Instance_Lifecycle)
-+ [Interception](extensibility.html#Interception)
-+ [Dynamic Configuration Listeners](extensibility.html#Dynamic_Configuration_Listeners)
-+ [Class Analysis](extensibility.html#Class_Analysis)
-+ [Run Level Services](extensibility.html#Run_Level_Services)
-+ [Self Descriptor Injection](extensibility.html#Self_Descriptor_Injection)
-+ [ServiceLocator to ServiceLocator Bridge](extensibility.html#ServiceLocator_to_ServiceLocator_Bridge)
-+ [Error Handling](extensibility.html#Error_Handling)
-+ [Operations](extensibility.html#Operations)
-+ [Stub Generation](extensibility.html#Stub_Generation)
-
-### Events
+## Events
 
 It is possible to send messages from one service to another using the HK2 event feature.  The event feature is allows for unrelated
 services to message each other without prior coordination (other than on the Type of event).  It is a pluggable event service,
@@ -102,7 +85,7 @@ To make this more clear, we have two examples of user scope/context pairs:
 - This [example][ctm-example] adds a context that is based on the current running tenant.
 - This [example][custom-resolver-example] adds a request scoped context.
 
-### PerThread Scope
+## PerThread Scope
 
 There is a per-thread scope/context pair optionally supported in HK2.
 Services marked with [PerThread][perthread] have their life cycle defined by the thread they are on.
@@ -111,7 +94,7 @@ Two objects on the same thread injecting a [PerThread][perthread] scope service 
 
 The [PerThread][perthread] scope can be added to any [ServiceLocator][servicelocator] by using the method [enablePerThreadScope][enableperthreadscope]
 
-### InheritableThread Scope
+## InheritableThread Scope
 
 There is a inheritable thread scope/context pair optionally supported in HK2.
 Services marked with [InheritableThread][inheritablethread] are similar to PerThread scoped services with one caveat,
@@ -122,7 +105,7 @@ Two objects on a parent and child thread injecting a [InheritableThread][inherit
 
 The [InheritableThread][inheritablethread] scope can be added to any [ServiceLocator][servicelocator] by using the method [enableInheritableThreadScope][enableInheritableThreadScope]
 
-### Immediate Scope
+## Immediate Scope
 
 There is an Immediate scope/context pair optionally supported in HK2.
 Services marked with [Immediate][immediate] will be started as soon as their
@@ -148,7 +131,7 @@ since this implementation will only automatically detect [Immediate][immediate] 
 to the [ServiceLocators][servicelocator] given to the [enableImmediateScope][enableimmediatescope]
 method.
 
-### Proxies
+## Proxies
 
 Rather than injecting an instance of a service itself, HK2 can also inject a proxy to that service.  There are a few
 reasons that you might want to use proxies.  One reason is because the lifeycle of two different scopes may be
@@ -209,7 +192,7 @@ public class AnotherService {
 }
 ```
 
-#### Proxying within the same scope
+### Proxying within the same scope
 
 By default if a service is proxiable then it will be proxied even when being injected into other services within the same scope.
 This allows for the lazy use case.  However, it is sometimes the case that it is counter-productive to proxy services when
@@ -238,7 +221,7 @@ public class ExpensiveRequestService {
 }
 ```
 
-#### Proxies and equals()
+### Proxies and equals()
 
 HK2 treats the equals method of Object slightly differently from other methods.  If the incoming parameter of the equals
 method is itself a proxy, then HK2 will unwrap that object and send in the unproxied object.  This is to ensure that
@@ -259,7 +242,7 @@ unwrapped and the underlying object will get passed in.
 No other method is treated in this way by the proxying code of HK2.
 
 
-### ClassLoading
+## ClassLoading
 
 Classloading is an interesting challenge in any Java environment.  HK2 defers classloading as long as possible, but at some
 point, it must get access to the true class in order to create and inject instances.  At that moment, HK2 will attempt
@@ -279,7 +262,7 @@ the [Descriptor][descriptor] is being reified.  It might also be possible to hav
 or construct the class dynamically using weaving or some other class building technology.
 The mind boggles at all the ways [HK2Loader][hk2loader] can be implemented.
 
-### Custom Injection Resolvers
+## Custom Injection Resolvers
 
 By default the system provides JSR-330 standard injection.
 That means honoring [@Inject][javaxinject] and all other parts of the JSR-330 specification.
@@ -307,7 +290,7 @@ it can add the service to the ServiceLocator and tell hk2 to look again for the 
 of using this would be when retrieving services from a remote system, or from some other service oriented
 system such as OSGi, Spring or Guice.
 
-### Security
+## Security
 
 Certain operations that are performed by the users of HK2 can be validated.  Validation can either
 allow or deny the operation in question.  The operations that can be validated are adding a
@@ -324,7 +307,7 @@ the [ValidationService][ValidationService] can be used to define the security of
 
 The example can be seen [here][security-lockdown-example-runner].
 
-### Instance Lifecycle
+## Instance Lifecycle
 
 A user may register an implementation of [InstanceLifecycleListener][instancelifecyclelistener] to be notified whenever an instance of a service is created.
 Unlike the [ValidationService][validationservice], which deals only with the metadata of a service,
@@ -332,7 +315,7 @@ the [InstanceLifecycleListener][instancelifecyclelistener] is notified whenever 
 of a service is created or destroyed.  This is a useful facility for tracing or for scenarios where a service wishes to become
 an automatic listener for anything that it is injected into.
 
-### Interception
+## Interception
 
 [AOP Alliance][aopalliance] method and constructor interception is supported by HK2.  Methods and constructors that are to be
 intercepted are identified using instances of the HK2 [InterceptionService][interceptionservice].  An example of
@@ -343,13 +326,13 @@ annotations to indicate services that should be intercepted, those that should d
 bind intercepted methods and constructors to their interceptors.  Information about the HK2 provided
 default implementation of the [InterceptionService][interceptionservice] can be found [here][aopdefault].
 
-### Dynamic Configuration Listeners
+## Dynamic Configuration Listeners
 
 A user may register an implementation of [DynamicConfigurationListener][dynamicconfigurationlistener] to be notified  whenever
 the set of [ActiveDescriptors][activedescriptor] in a [ServiceLocator][servicelocator] has changed.  The
 [DynamicConfigurationListener][dynamicconfigurationlistener] must be in the [Singleton][singleton] scope.
 
-### Class Analysis
+## Class Analysis
 
 HK2 often needs to look at a java class in order to find things about that class such as its set
 of constructors, methods or fields.  The choices HK2 makes is usually determined by specifications
@@ -368,7 +351,7 @@ that should be used to analyze the implementation class.
 HK2 always adds an implementation of [ClassAnalyzer][classanalyzer] with the name "default" that implements
 the JSR-299 style of selection.
 
-### Run Level Services
+## Run Level Services
 
 If your system has sets of services that need to come up and down in an orderly fashion consider
 using the HK2 Run Level Services.  The Run Level Service allows one to specify levels at
@@ -377,7 +360,7 @@ has changed.
 
 Learn more about Run Level Services [here][runlevelservices].
 
-### Self Descriptor Injection
+## Self Descriptor Injection
 
 Any service can have its own [ActiveDescriptor][activedescriptor] injected into itself.  One use case for
 this is when you have a common set of services that all share the same super class.  The super class can
@@ -392,7 +375,7 @@ public abstract class GenericService {
 }
 ```
 
-### ServiceLocator to ServiceLocator Bridge
+## ServiceLocator to ServiceLocator Bridge
 
 It is possible to import all the [NORMAL] services from one ServiceLocator into
 another ServiceLocator as long as the locators do not have a parent/child relationship.  You do
@@ -422,7 +405,7 @@ method of [ProxyCtl][proxyctl] since it may just return the underlying proxy rat
 end service.  Calling methods on services works but may go through layers of proxies.  This should
 be mostly invisible to your application unless you are doing complex work with the proxies.
 
-### Error Handling
+## Error Handling
 
 Errors can pop up in various phases of the HK2 service lifecycle.  Users can register implementations of the
 [ErrorService][errorservice] in order to be notified when errors occur.  There are currently four types of
@@ -435,7 +418,7 @@ errors that the system sends to the [ErrorService][errorservice]:
 
 Using the [ErrorService][errorservice] can be a convenient place to standardize on logging of service failures.
 
-### Operations
+## Operations
 
 An HK2 Operation is a scope/context pair used to implement scopes like RequestScope, ApplicationScope
 or TransactionScope.  Any service lifecycle (context) for which only one instance of that context can be
@@ -444,7 +427,7 @@ as each thread is generally tied to a single request.
 
 More information about HK2 Operations and an example can be found [here][operations].
 
-### Stub Generation
+## Stub Generation
 
 HK2 has a [Stub][stub] annotation that can be put onto abstract classes.  The hk2-metadata-generator
 will then generate a class that implements the unimplemented methods on the abstract class.  This

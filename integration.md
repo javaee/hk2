@@ -36,11 +36,12 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-Integration
------------
+* TOC
+{:toc}
 
+# Integration
 
-### GlassFish integration
+## GlassFish integration
 
 HK2 can be used in GlassFish applications.
 Every deployed GlassFish application has a unique ServiceLocator associated with it that can be looked up with JNDI name **java:app/hk2/ServiceLocator**.
@@ -94,7 +95,7 @@ One can also use the [DynamicConfigurationService][dynamicConf] in order to add 
 
 This also works along with the [Binder][bindeer]: and [BuilderHelper][buildhelper] service builders.
 
-### CDI Integration
+## CDI Integration
 
 HK2 is fully integrated with the GlassFish 4.0 CDI implementation.
 
@@ -107,12 +108,12 @@ This is because CDI does early validation of all injection points, and hence all
 The CDI validation phase occurs prior to any application code being run.
 Due to the dynamic nature of HK2 services, CDI services can be injected into HK2 services that were created at any time in the life of the application.
 
-### Guice
+## Guice
 
 HK2 services can be injected into [Guice][guice] services and [Guice][guice] services can be injected into HK2 services.
 To do so use the Guice/HK2 bridge, which is described [here](guice-bridge.html).
   
-### Spring
+## Spring
 
 HK2 services can be used as [Spring][spring] beans, and [Spring][spring] beans can be injected into
 HK2 services.  To do so use the Spring/HK2 bridge, which is described [here](spring-bridge.html).

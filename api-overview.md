@@ -36,26 +36,15 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## API Overview
+* TOC
+{:toc}
 
-### Compatibility
+# API Overview
+
+## Compatibility
 
 This page describes the HK2 2.0 API, which is based on JSR-330 standard annotations.
 Also, Habitat has been replaced with a new interface called [ServiceLocator][servicelocator].
-
-+ [Introduction](api-overview.html#Introduction)
-+ [ServiceLocator](api-overview.html#ServiceLocator)
-+ [Adding in your own services](api-overview.html#Adding_in_your_own_services)
-+ [BuilderHelper Binding EDSL](api-overview.html#BuilderHelper_Binding_EDSL)
-+ [DescriptorImpl](api-overview.html#DescriptorImpl)
-+ [Binding a Descriptor into a ServiceLocator](api-overview.html#Binding_a_Descriptor_into_a_ServiceLocator)
-+ [Convenience methods for adding services](api-overview#Convenience_methods_for_adding_services)
-+ [Looking up services](api-overview.html#Looking_up_services)
-+ [Looking up services by name](api-overview.html#Looking_up_services_by_name)
-+ [Looking up services with qualifiers](api-overview.html#Looking_up_services_with_qualifiers)
-+ [Getting all services](api-overview.html#Getting_all_services)
-+ [Getting service descriptors](api-overview.html#Getting_service_descriptors)
-+ [Unmanaged Creation, Injection and Lifecycle](api-overview.html#Unmanaged_Creation,_Injection_and_Lifecycle)
 
 ## Introduction
 

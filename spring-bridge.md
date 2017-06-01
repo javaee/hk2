@@ -36,22 +36,20 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## The Spring/HK2 Bridge
+* TOC
+{:toc}
+
+# The Spring/HK2 Bridge
 
 The Spring/HK2 Bridge can be used to inject [Spring][spring] services
 into HK2 services or inject HK2 services into [Spring][spring] services.
 
-+ [Definitions](spring-bridge.html#Definitions)
-+ [Injecting Spring services into HK2 services](spring-bridge.html#Injecting_Spring_services_into_HK2_services)
-+ [Injecting HK2 services into Spring services](spring-bridge.html#Injecting_HK2_services_into_Spring_services)
-+ [Bi-Directional Spring/HK2 Bridge](spring-bridge.html#Bi-Directional_Spring/HK2_Bridge)
-
-### Definitions
+## Definitions
 
 + A [Spring][spring] service is a service that is instantiated (created) by [Spring][spring]
 + An HK2 service is a service that is instantiated (created) by HK2
  
-### Injecting Spring services into HK2 services
+## Injecting Spring services into HK2 services
 
 [Spring][spring] services can be injected into any injection point in HK2.
 In order to do this you must tell HK2 about the [Spring][spring] [BeanFactory][beanfactory]
@@ -65,7 +63,7 @@ This is a code snippet that initializes a [ServiceLocator][servicelocator]:
 
 ```java
   SpringBridge.getSpringBridge().initializeSpringBridge(aServiceLocator);
-```java
+```
 
 In the second step you must tell your initialized [ServiceLocator][servicelocator] about the
 specific [Spring][spring] [BeanFactory][beanfactory] that you want it to look for services in.
@@ -77,7 +75,7 @@ The following code snippet adds a [Spring][spring] [BeanFactory][beanfactory] to
       SpringIntoHK2Bridge springBridge = aServiceLocator.getService(SpringIntoHK2Bridge.class);
       springBridge.bridgeSpringBeanFactory(springFactory);
   }
-```java
+```
 
  Any [Spring][spring] [BeanFactory][beanfactory] added with the bridgeSpringBeanFactory method
  will be searched for services that HK2 cannot otherwise find.
@@ -92,9 +90,9 @@ The following code snippet adds a [Spring][spring] [BeanFactory][beanfactory] to
       @Inject
       private SpringService springService;
   }
-```java
+```
 
-### Injecting HK2 services into Spring services
+## Injecting HK2 services into Spring services
 
   HK2 services can be injected into [Spring][spring] services.  A HK2 service
   can be injected into any place a normal Spring Bean can be injected.  For example, if you have an HK2 service
@@ -110,7 +108,7 @@ The following code snippet adds a [Spring][spring] [BeanFactory][beanfactory] to
           this.hk2Service = hk2Service;
       }
   }
-```java
+```
 
   All HK2 services are in a [Spring][spring]
   [Scope][scope]
@@ -146,7 +144,7 @@ The following code snippet adds a [Spring][spring] [BeanFactory][beanfactory] to
           </map>
       </property>
   </bean>
-```xml
+```
 
 An HK2 service is then defined by adding it to the [Spring][spring] beans.xml by setting its scope to "hk2".
 The id of the HK2 service is formatted as per the utility API BuilderHelper.createTokenizedFilter.
@@ -158,7 +156,7 @@ The following is an example [Spring][spring] beans.xml stanza that defines an HK
     <bean id="org.jvnet.hk2.spring.bridge.test.hk2tospring.HK2Service"
 	      class="org.jvnet.hk2.spring.bridge.test.hk2tospring.HK2Service"
 	      scope="hk2" />
-```xml
+```
 
 In the stanza above the scope was set to "hk2," implying that the HK2 SpringScopeImpl 
 will be used to lookup the bean.
@@ -169,7 +167,7 @@ The following stanza injects HK2Service into SpringService:
     <bean id="SpringService" class="org.jvnet.hk2.spring.bridge.test.hk2tospring.SpringService">
 	  <property name="HK2Service" ref="org.jvnet.hk2.spring.bridge.test.hk2tospring.HK2Service" />
 	</bean>
-```xml
+```
 
 To make it clear, the following is the entire [Spring][spring] beans.xml which injects HK2Service into SpringService:
   
@@ -201,9 +199,9 @@ To make it clear, the following is the entire [Spring][spring] beans.xml which i
 	</bean>
  
   </beans>
-```xml
+```
 
-### Bi-Directional Spring/HK2 Bridge
+## Bi-Directional Spring/HK2 Bridge
 
 When using Spring and HK2 bi-directionally it is important to remember that Spring instantiates beans
 as soon as they are satisfied (i.e., as soon as all references are available).  This can make bootstrapping
@@ -254,7 +252,7 @@ also be used.
 	</bean>
  
 </beans>
-```xml
+```
 
 In the above example SpringService1_3 has HK2Service1_2 injected into it, while HK2Service1_2 has
 SpringService1_1 injected into it (though you can't see that in the XML stanza), and SpringService1_1

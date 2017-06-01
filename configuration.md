@@ -36,12 +36,15 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Configuration
+* TOC
+{:toc}
+
+# Configuration
 
 HK2 has an optional feature which allows configuration values specified in some format
 such as (but not limited to) XML or Properties files to be injected into HK2 services.
 
-### The parts
+## The parts
 
 The architecture of the HK2 configuration system consists of three parts.  These three parts are
 then combined to make the user experience simple and intuitive.  The three basic parts of the
@@ -60,7 +63,7 @@ JavaBeans.
 Since it is the second part of the HK2 configuration system that serves as the basic abstraction
 layer it shall be described first.
 
-### The HK2 Configuration Registry
+## The HK2 Configuration Registry
 
 The HK2 Configuration Registry is an in-memory registry of JavaBeans (or bean-like maps).  Instances
 are organized by a type, and then further by instance names.  It is usually the case that all instances
@@ -83,7 +86,7 @@ API.  The HK2 service integration part of the HK2 configuration feature sets its
 [BeanDatabaseUpdateListener][beandatabaseupdatelistener] in order to provision HK2 services with configuration
 data.  However there may be other uses for a [BeanDatabaseUpdateListener][beandatabaseupdatelistener].
 
-### HK2 Service Integration
+## HK2 Service Integration
 
 The HK2 service integration layer takes JavaBean instances from the Hub and creates an HK2 service per instance
 of the type.  It does this by setting itself up as a [BeanDatabaseUpdateListener][beandatabaseupdatelistener]
@@ -207,7 +210,7 @@ get updated.
 The HK2 service integration part of the HK2 configuration system can be enabled using the enableConfigurationSystem
 method of the [ConfigurationUtilities][configurationutilities] class.
 
-### Configuration Persistence
+## Configuration Persistence
 
 The persistence layer isn't a layer so much as a set of plugins that take configuration data from some form (usually
 persistent) and tranlate it into JavaBeans or bean-like maps.  Those JavaBeans or bean-like maps are then
@@ -219,7 +222,7 @@ server.
 At the time of writing HK2 provides a provider that reads property files.  There may be other providers that
 are added as well (i.e., one that reads XML data).
 
-### The HK2 Properties Configuration provider
+## The HK2 Properties Configuration provider
 
 This space is under construction
 

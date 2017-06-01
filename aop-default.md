@@ -36,13 +36,16 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Default Interception Service Implementation
+* TOC
+{:toc}
+
+# Default Interception Service Implementation
 
 In the hk2-extras module there is a default implementation of the [InterceptionService][interceptionservice] which
 uses annotations to determine what services are to be intercepted and which interceptors should
 be used.  This page describes this default implementation.
 
-### Indicating Services to be Intercepted
+## Indicating Services to be Intercepted
 
 All services to be intercepted by this implementation must be annotated with the
 [Intercepted][intercepted] qualifier.  The [Intercepted][intercepted] qualifier may
@@ -66,7 +69,7 @@ public class MyService {
 }
 ```
 
-### Indicating Interceptors
+## Indicating Interceptors
 
 A class that wishes to be used as a method or constructor interceptor must adhere to the
 following rules:
@@ -102,7 +105,7 @@ public class MyConstructorInterceptor implements ConstructorInterceptor {
 }
 ```
 
-### Interception Bindings
+## Interception Bindings
 
 We must still be able to associate intercepted things such as constructors and methods of intercepted services
 with the specific interceptors.  This is done by using the [InterceptionBinder][interceptionbinder]
@@ -197,7 +200,7 @@ public @interface SecurelyTraceable {
 }
 ```
 
-### Interceptor Ordering and Customization
+## Interceptor Ordering and Customization
 
 Normally interceptors will run in their natural HK2 ordering (based on Rank and serivce/locator id)
 but sometimes it is convenient to re-order the interceptors based on some external configuration. 
@@ -214,7 +217,7 @@ If there are more than one implementation of the [InterceptorOrderingService][in
 then all implementations are run in hk2 ranking order with the results of the previous service
 being given to the next service.  In this way chains of interceptor ordering modifiers can be used together.
 
-### Getting it all started
+## Getting it all started
 
 In order to enable the default implementation of the [InterceptionService][interceptionservice]
 you will need to use the enableDefaultInterceptorServiceImplementation method of

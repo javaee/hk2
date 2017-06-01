@@ -36,13 +36,12 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-Getting started
----------------
+* TOC
+{:toc}
 
-- [Maven build](getting-started.html#maven-build)
-- [Automatic Service Population](getting-started.html#automatic-service-population)
+# Getting started
 
-### Maven Build ###
+## Maven Build
 
 The best way to use HK2 in your builds is to add the following dependency in your maven build:
 
@@ -91,7 +90,7 @@ detect services is not available, and so all HK2 objects must be added
 programmatically and gotten with the HK2 API.  However, the above is perfect
 for small projects that want to play with the HK2 API to see how it works.
 
-### Automatic Service Population ###
+## Automatic Service Population
 
 In order for HK2 to automatically find services at runtime it can read files called inhabitant files.
  These are usually placed in your JAR file at location META-INF/hk2-locator.

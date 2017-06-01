@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Aspect Oriented Programming (AOP) Example
+* TOC
+{:toc}
+
+# Aspect Oriented Programming (AOP) Example
 
 This example illustrates how to use Aspect Oriented Programming (AOP) with HK2
 services.

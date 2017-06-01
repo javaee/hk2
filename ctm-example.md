@@ -36,7 +36,7 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Tenant Managed Scope Example
+# Tenant Managed Scope Example
 
 This example illustrates how a scope can be made that is tenant aware.  First, lets define a tenant.
 
@@ -342,8 +342,3 @@ to be re-injected.  Here is the pseudo-code for the test:
 The point of the test is to ensure that the Environment object passed into the ServiceProviderEngine is in fact getting switched
 when we switch the tenant from Alice to Bob.
 
-
-
- 
-    
-  

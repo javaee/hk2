@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Security Lockdown Example
+* TOC
+{:toc}
+
+# Security Lockdown Example
 
 In this example we will show how to check every injection, lookup, bind
 and unbind operation against a set of J2SE security permissions.  In order
@@ -69,7 +72,7 @@ to do so he is rebuffed by the security operations of the system.
 
 Lets take a look in detail at how this total security lockdown of the system occurs.
  
-### The System Project
+## The System Project
 
 The system project has some resources it would like to give out to some applications,
 but not to others.  It would also like to be able to prevent applications from
@@ -99,7 +102,7 @@ a service that should be protected:
 public class AuditService {
     ...
 }
-```java
+```
 
 The most important thing to notice about this service is that there is nothing at all special about it.  It is
 not annotated with any sort of special annotation or indication that it is a secure or protected service.  This
@@ -145,7 +148,7 @@ public class ValidationServiceImpl implements ValidationService {
     
     ...
 }
-```java
+```
 
 The[BuilderHelper][buildhelper] allFilter method returns a [Filter][filter] that always returns true.
 In this way we have assured that every lookup and injection in the system will be run through the implementation of 
@@ -163,7 +166,7 @@ public class ValidationServiceImpl implements ValidationService {
         return validator;
     }
 }
-```java
+```
 
 Note that since the ValidationService is a Singleton service that the ValidatorImpl will only be created once,
 and the same one will be returned to the system every time the getValidator method is called.
@@ -193,7 +196,7 @@ public class ValidatorImpl implements Validator {
     ...
     
 }
-```java
+```
 
 It is very important to understand the context in which these calls are made.  In that way it can be determined
 how to check the permission being granted.  In the BIND, UNBIND, and in any LOOKUP that is *not* an injection
@@ -215,7 +218,7 @@ or not the permission is granted or not.  Here it is:
             return false;
         }
     }
-```java
+```
 
 This converts any AccessControlException (an indication that the permission was NOT granted) into a simple
 false value.  Otherwise, if the checkPermission call is successful this method will return true.  It should
@@ -228,7 +231,7 @@ is easy to use:
     private boolean validateBindAndUnbind() {
         return checkPerm(new AllPermission());
     }
-```java
+```
 
 This is very simple and ensures that anyone who tries to BIND or UNBIND service descriptions into the system
 must have AllPermission!
@@ -253,7 +256,7 @@ Lets look at the method that handles the both LOOKUP cases:
         
         return validateInjection(candidate, injectee);
     }
-```java
+```
 
 As you can see from the above code, the lookup has been broken into two cases, the
 lookup with the API case, and the lookup based on the injection point case.  The
@@ -273,7 +276,7 @@ method:
         
         return retVal;
     }
-```java
+```
 
 The above code will create the Permission that needs to be checked to see if the
 caller should have access to the passed in package.
@@ -298,7 +301,7 @@ must be allowed in order to access that [ActiveDescriptor][activedescriptor]:
         
         return retVal;
     }
-```java
+```
 
 Forearmed with the above methods, we can now look at how the method which
 checks whether or not the lookup should be authorized.  Here is the implementation
@@ -320,7 +323,7 @@ of validateLookupAPI:
         
         return true;
     }
-```java
+```
 
 This is a strait-forward implementation, simply ensuring with the checkPerm call that
 the caller is allowed to access all of the contracts offered by the given candidate
@@ -365,7 +368,7 @@ Here is the implementation of the validateInjection method:
         
         return true;
     }
-```java
+```
 
 This method first gets the set of permissions that the protection domain must have using
 the getLookupPermissions method.  It then gets the ProtectionDomain of the injectee
@@ -428,7 +431,7 @@ public class AliceApp {
         auditor.auditLog("Alice performed an audit for " + fromMe);
     }
 }
-```java
+```
 
 The injection point for the AuditService will pass the validator code because Alice
 has access to org.acme.service package.  Now lets look at Mallory.
@@ -472,7 +475,7 @@ public class MalloryApp {
     
     ...
 }
-```java
+```
 
 Mallory injects both the ServiceLocator itself as well as the AliceApp.  Since Mallory has
 been granted those rights, these injections are Validated by the Validator and found to be
@@ -490,7 +493,7 @@ to look up the AuditService, which he should not be allowed to do:
             "org.acme.security.AuditService"));
         auditService.toString();  // This should NPE!
     }
-```java
+```
 
 Note that in this code that tricky fellow Mallory used a pure string representation of the
 fully qualified class name of the AuditService, since the system would not have allowed him
@@ -513,7 +516,7 @@ In this method, Mallory will attempt to advertise a service:
         
         config.commit();  // This will throw a MultiException
     }
-```java
+```
 
 Since Mallory does not have the rights to advertise a service the commit call will throw
 an exception.
@@ -552,7 +555,7 @@ can't be allowed, or the very fabric of space-time could be threatened:
         
         config.commit();  // This will throw a MultiException
     }
-```java
+```
 
 Again, since Mallory does not have the right to unbind services from the registry, the
 commit method will throw an exception and the entire operation will fail.
@@ -571,7 +574,7 @@ public class EvilInjectedService {
     }
 
 }
-```java
+```
 
 In this case Mallory is not doing a direct API lookup of the AuditService, but rather the
 EvilInjectedService is trying to simply inject the service into itself, hoping that this
@@ -585,7 +588,7 @@ of MalloryApp:
     public void tryToInstantiateAServiceWithABadInjectionPoint() {
         locator.getService(EvilInjectedService.class);  // Will throw MultiException
     }
-```java
+```
 
 In this case the system will attempt to instatiate the EvilInjectedService and will fail,
 since the EvilInjectedService does not have the rights to inject the AuditService.
@@ -596,7 +599,7 @@ proper set of priviliges.
 
 The last project in the example is the runner.
  
-### The Runner Project
+## The Runner Project
 
 The Runner project runs a set of junit tests that ensures that the System project, the Alice
 project and the Mallory project runs as expected.  The test case ensures that both the
@@ -618,12 +621,12 @@ with the java security manager enabled.  This is from the pom.xml:
     <!-- -Djava.security.debug=access,failure,domain -->
     </configuration>
 </plugin>
-```xml
+```
 
 The other interesting file in the Runner project is the policy.txt, which gives the full
 set of grants necessary to run this test properly.
  
-### Conclusion
+## Conclusion
 
 This example shows how a secure system can be built in HK2 given the tools provided.  In
 a real use case other decisions can be made about how to validate the operations being

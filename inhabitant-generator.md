@@ -36,8 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-HK2 Metadata Generators
------------------------
+* TOC
+{:toc}
+
+# Inhabitant Generators
 
 There are two ways to generate hk2 metadata (called inhabitant files) that can be
 used by the runtime system to find hk2 services without having to classload those
@@ -52,11 +54,7 @@ but requires the user to specify lines in the build system files (besides just
 dependencies).  Users can choose whichever tool works for them in their
 build environment.
 
-+ [HK2 Metadata Generator](inhabitant-generator.html#HK2_Metadata_Generator)
-+ [HK2 Inhabitant Generator](inhabitant-generator.html#HK2_Inhabitant_Generator)
-+ [Stub Generation](inhabitant-generator.html#Stub_Generation)
-
-### HK2 Metadata Generator ###
+## HK2 Metadata Generator
 
 The HK2 Metadata Generator will generate hk2 inhabitant files during the compilation
 of your java files.  It is a JSR-269 annotation processor that handles the [@Service][service]
@@ -91,7 +89,7 @@ dependencies {
 }
 ```
 
-<h4>HK2 Metadata Generator Options</h4>
+### HK2 Metadata Generator Options
 
 By default the HK2 Metadata Generator places the output file in META-INF/hk2-locator/default. However
 this behavior can be modified by setting the option <i>org.glassfish.hk2.metadata.location</i> to
@@ -104,9 +102,9 @@ compileJava {
 }
 ```
 
-### HK2 Inhabitant Generator ###
+## HK2 Inhabitant Generator
 
-The HK2 Inhabitants Generator is a utility that will generate inhabitants file during the
+The HK2 Inhabitant Generator is a utility that will generate inhabitants file during the
 build of your JAR file.  It works by analyzing the classes that have been built by javac and
 then creating the file **META-INF/hk2-locator/default** (by default) in your JAR file that has
 information in it about all of the classes that you have marked with [@Service][service] or
@@ -116,13 +114,8 @@ The HK2 Inhabitatants Generator can be used as a standalone command-line tool, o
 be embedded in any Java program.  It can also be used in a Maven build.  An Eclipse build
 and an ant task are also planned.  Here are the ways that the HK2 Inhabitants Generator can
 be used:
- 
-+ [Command Line Tool](inhabitant-generator.html#Command_Line_Tool)
-+ [Embedded Usage](inhabitant-generator.html#Embedded_Usage)
-+ [Using Maven](inhabitant-generator.html#Using_Maven)
-+ [Ant Task](inhabitant-generator.html#Ant_Task)
 
-### Command Line Tool ###
+### Command Line Tool
 
 The HK2 Inhabitants Genertor can be run from the command line like this:
  
@@ -161,7 +154,7 @@ The --verbose option make the generator print extra information as it does its w
 This command line utility will call **System.exit** when it is done with a 0 code if it was able
 to work properly and a non-zero value if it failed in some way.
  
-### Embedded Usage ###
+### Embedded Usage
 
 The class [org.jvnet.hk2.generator.HabitatGenerator][habitatgenerator] has a static method on called embeddedMain.
 The embeddedMain takes the typical argv[] array of parameters and so has the same behavior
@@ -172,7 +165,7 @@ System.exit().  See the [javadoc][habitatgenerator] for more information.
 Using embeddedMain is useful if you want to build your own build tools that generate inhabitants
 files for your own IDE or other build environment.
  
-### Using Maven ###
+### Using Maven
 
 The HabitatGenerator is also available as a Maven plugin.  It has a single goal, called
 generateInhabitants that is run in the process-classes phase by default.  Using this plugin
@@ -206,7 +199,7 @@ be analyzed for classes marked with [@Service][service].
 + locator The name of the locator file (which is \"default\" by default)
 + noswap (true or false) if set to true the generator will overwrite files in place which is riskier but faster
   
-### Ant Task ###
+### Ant Task
 
 The inhabitant generator can also be used as an ant task.  The ant task is org.jvnet.hk2.generator.maven.ant.HK2InhabitantGeneratorTask.
 Below find an example ant file that uses the task:
@@ -239,7 +232,7 @@ The ant plugin has the following options:
 + locator The name of the locator file (which is \"default\" by default)
 + noswap (true or false) if set to true the generator will overwrite files in place which is riskier but faster
 
-### Stub Generation ###
+## Stub Generation
 
 The HK2 metadata generator can also generate implementation classes based on abstract classes.  This is useful
 when testing, as it is often the case in tests that the user would like to replace some service with one

@@ -36,7 +36,10 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Operations
+* TOC
+{:toc}
+
+# Operations
 
 Operations are building blocks for crafting scope/context pairs like RequestScoped, ApplicationScoped or
 TransactionScoped.  HK2 is designed to run in any java process, including those that do not have a container
@@ -46,7 +49,7 @@ for the writers of the system to use HK2 Operations to create a class of service
 by the start or stop of those user requests or controlling application or whatever other demarcation is needed
 by the process as a whole.
 
-### Operations Introduction
+## Operations Introduction
 
 A HK2 Operation is defined first by a scope annotation.  Any scope annotation will do, but normally these
 scopes are proxiable since they are meant to be injected into services with different lifecycles, such
@@ -74,7 +77,7 @@ can be associated with the [OperationHandle][operationhandle].
 
 The following example will illustrate basic usage of HK2 Operations.
 
-### Operations Example
+## Operations Example
 
 The example can be found under the HK2 source tree at examples/operations.  In the example
 there is an banking application that maintains a deposit ledger and withdrawal ledger indexed
@@ -97,7 +100,7 @@ definition of the Deposit scope:
 @Target(ElementType.TYPE)
 public @interface DepositScope {
 }
-```java
+```
 
 Notice that the DepositScope is proxiable, and that it will not be proxied for other services
 that are also in the DepositScope scope.  In HK2 every defined scope needs an implementation
@@ -113,7 +116,7 @@ public class DepositScopeContext extends OperationContext<DepositScope> {
     }
     
 }
-```java
+```
 
 The only method that needs to be implemented is the getScope method which need only 
 return the class of the scope annotation.  The DespositScope has now been fully
@@ -127,7 +130,7 @@ WithdrawalScope:
 @Target(ElementType.TYPE)
 public @interface WithdrawalScope {
 }
-```java
+```
 
 ```java
 @Singleton
@@ -138,9 +141,9 @@ public class WithdrawalScopeContext extends OperationContext<WithdrawalScope> {
     }
 
 }
-```java
+```
 
-#### Operation Scoped Services
+### Operation Scoped Services
 
 Lets take a look at two services that are in the HK2 Operations scopes that we
 just defined.  The first one is the DepositLedger, which keeps track of how much
@@ -171,7 +174,7 @@ public class DepositorService {
     }
 
 }
-```java
+```
 
 This simple service is in the DepositScope.  The important thing to notice about this
 service is that it does not keep track in any way which bank it is keeping these
@@ -212,7 +215,7 @@ public class WithdrawalService {
         return accounts.get(account);
     }
 }
-```java
+```
 
 This service, like the previous one is in a proxiable HK2 Operation
 scope.  In this case it is in the WithdrawalScope.  Like the previous
@@ -244,7 +247,7 @@ public class TransferService {
     }
 
 }
-```java
+```
 
 The TransferService injects the DepositorService and the WithdrawalService in order to
 transfer funds from the withdrawer to the depositor.  This service also doesn't know
@@ -252,7 +255,7 @@ which banks are involved in the transfer, so it is also expecting the system sof
 to have used the HK2 Operations system in order to properly set the context of the
 call to doTransfer.
 
-#### The Banking Service
+### The Banking Service
 
 The BankingService is the service whose implementation will use the HK2 Operations
 feature in order to properly setup the context in which the services in the
@@ -300,7 +303,7 @@ public interface BankingService {
     public int getWithdrawlBalance(String bank, long account);
 
 }
-```java
+```
 
 It is an implementation of the BankingService that the user code will use to
 perform the balance check and transfer operations.  Lets take a look at the
@@ -345,7 +348,7 @@ public class BankingServiceImpl implements BankingService {
     }
 
 }
-```java
+```
 
 Code not involved in the implementation of getWithdrawalBalance has been removed from
 the code snippet above.
@@ -371,7 +374,7 @@ The getDepositedBalance method of BankingServiceImpl works the same way as the
 getWithdrawalBalance with the difference being that the HK2 Operation used is
 of type DepositScope as opposed to WithdrawalScope.
 
-#### Transferring Funds Between Banks
+### Transferring Funds Between Banks
 
 The implementation of the method transferFunds in BankingServiceImpl is seen below:
 
@@ -396,13 +399,13 @@ The implementation of the method transferFunds in BankingServiceImpl is seen bel
         }
         
     }
-```java
+```
 
 The interesting thing about this method is that it illustrates that two HK2 Operations
 of different types (DepositScope and WithdrawalScope) can be active on a single thread
 at the same time.  This duality allows the transfer service to operate between banks simultaneously.
 
-#### Seeing it Work
+### Seeing it Work
 
 To see the example working there is a junit test case.  The test case simply creates
 some Bank Strings (Chase, Bank of America and South Jersey Federal Credit Union) and
@@ -471,9 +474,9 @@ to make sure they are as expected.  Here it is:
         
         // Yay, the Operations worked properly!
     }
-```java
+```
 
-### Conclusion
+## Conclusion
 
 HK2 Operations provide a convenient set of tools for building scopes/context pairs that
 follow the general rule of "one operation on a thread at a time."  There are many Operations

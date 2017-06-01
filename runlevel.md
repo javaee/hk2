@@ -36,21 +36,17 @@
 [//]: # " only if the new code is made subject to such option by the copyright "
 [//]: # " holder. "
 
-## Run Level Service
+* TOC
+{:toc}
+
+# Run Level Service
 
 The HK2 run level service allows you to automatically bring your system up and down in
 an orderly fashion.  Run level services are annotated to come up or down at specific
 levels.  The user then sets the current level of the system and the run level service
 ensures that all services at that level and below are started.
 
-+ [Creating a RunLevel service](runlevel.html#Creating_a_RunLevel_service)
-+ [The RunLevelController](runlevel.html#The_RunLevelController)
-+ [The RunLevelListener](runlevel.html#The_RunLevelListener)
-+ [Multi Threading](runlevel.html#Multi_Threading)
-+ [Ordering](runlevel.html#Ordering)
-+ [Other Goodies](runlevel.html#Other_Goodies)
-
-### Creating a RunLevel service
+## Creating a RunLevel service
 
 A RunLevel service is simply a service that is in the [RunLevel][runlevel] scope.  RunLevel services
 normally have a @PostConstruct or @PreDestroy method to be called when the service is started or
@@ -65,7 +61,7 @@ stopped (but this is not required).Here is an example of a RunLevel service:
     @PreDestroy
     private void stopMe() {}
   }
-```java
+```
 
 The LoggingRunLevelService will get started when the run level is 5 or higher, and will be shutdown
 if the run level is dropped to 4 or lower.  
@@ -81,7 +77,7 @@ The following service is started at level 10:
     @PreDestroy
     private void stopMe() {}
   }
-```java
+```
 
 All the services in one level are started prior to any service in another level being started.
 If the system is going down rather than up, all services in a level will be stopped before
@@ -90,7 +86,7 @@ services in a lower level are stopped.
 The implementation of [Context][context] that goes along with the [RunLevel][runlevel] scope
 is provided by the RunLevel feature.
 
-### The RunLevelController
+## The RunLevelController
 
 The [RunLevelController][runlevelcontroller] is a service implemented by the HK2 RunLevel
 feature.  It can tell you the current run level of the system, and it can be used to
@@ -109,7 +105,7 @@ The synchronous API to change levels is proceedTo.  You can use it like this:
         controller.proceedTo(level);
     }
   }
-```java
+```
 
 This code will either bring the system up or down to the specified level while blocking
 the thread.  If you do not want to block the thread, you can use the asynchronous version
@@ -125,7 +121,7 @@ or waited on at a later time.
         return controller.proceedToAsync(level);
     }
   }
-```java
+```
 
 There are also methods on the [RunLevelFuture][runlevelfuture] which allows the caller
 to determine what level the system is proceeding to, and whether or not the current
@@ -136,7 +132,7 @@ started and existing job cannot be changed.  A running job can be cancelled at a
 A [RunLevelListener][runlevellistener] can be used to change the proceedTo value of a
 RunLevel job.
 
-### The RunLevelListener
+## The RunLevelListener
 
 The [RunLevelListener][runlevellistener] is an interface implemented by users of the RunLevel
 service if they want to perform actions in error situations or at the end of a level.  The
@@ -166,7 +162,7 @@ events that happen.
             info.getError());
     }
   }
-```java
+```
 
 The onProgress callback can be used to change the level the current job is proceeding to
 using the changeProposedLevel method of the passed in [ChangeableRunLevelFuture][changeablerunlevelfuture].
@@ -184,7 +180,7 @@ level the default action is to ignore the error.
 If the onCancelled callback has been called then the job has been cancelled.  A new job
 can be put into place, but the current job is considered to be complete.
 
-### Multi Threading
+## Multi Threading
 
 The [RunLevelController][runlevelcontroller] will attempt to run all of the services
 in a single run-level on parallel threads.  All dependencies will be honored as
@@ -209,7 +205,7 @@ with the setExecutor method of the [RunLevelController][runlevelcontroller].  Th
 [Executor][executor] that is currently being used can be discovered with the getExecutor
 method.
 
-### Ordering
+## Ordering
 
 In general the run level feature feeds all the services in a certain level to the
 set of threads based on the natural ordering given by hk2.  If only a single thread
@@ -224,7 +220,7 @@ will be called with the results from the previous sort method of
 [Sorter][sorter].  The final result will be the list of services given to the
 set of threads executing run-level services.
 
-### Other Goodies
+## Other Goodies
 
 When you give a service a RunLevel value like 10, that normally means that the service
 should start at level 10, no sooner and no later.  In fact, by default if a service
@@ -239,7 +235,7 @@ the [RunLevel][runlevel] to RUNLEVEL_MODE_NON_VALIDATING.  Here is an example:
   @RunLevel(value=10, mode=RunLevel.RUNLEVEL_MODE_NON_VALIDATING)
   public class CanRunBeforeTenService {
   }
-```java
+```
 
 HK2 is normally a demand driven system, meaning that services are not started until there
 is an explicit lookup for a service (either via API or via injection).  The HK2 Run Level
