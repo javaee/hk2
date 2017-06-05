@@ -25,3 +25,5 @@ osgi/
 osgiversion-maven-plugin/
 spring-bridge
 .jekyll-metadata
+/assets/
+/_layouts/
