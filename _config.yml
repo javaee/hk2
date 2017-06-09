@@ -6,7 +6,7 @@ description: A light-weight and dynamic dependency injection framework
 # sidebar links url
 links:
   download: http://repo1.maven.org/maven2/org/glassfish/hk2/
-  source: https://github.com/hk2-project/hk2
+  source: https://github.com/javaee/hk2
   mailinglist: https://javaee.groups.io/g/hk2
   #javadocs:
   #docs:
