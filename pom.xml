@@ -137,14 +137,6 @@
         </mailingList>
     </mailingLists>
 
-    <repositories>
-        <repository>
-            <id>spring-external</id>
-            <name>SpringSource Enterprise Bundle Repository - External Library Releases</name>
-            <url>http://repository.springsource.com/maven/bundles/external</url>
-        </repository>
-    </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>jvnet-nexus-snapshots</id>
