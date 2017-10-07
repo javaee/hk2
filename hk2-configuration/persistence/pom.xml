@@ -54,7 +54,6 @@
     <name>HK2 Configuration Persistence Modules</name>
     
     <modules>
-        <module>hk2-xml-dom</module>
         <module>property-file</module>
         <module>hk2-xml</module>
     </modules>
