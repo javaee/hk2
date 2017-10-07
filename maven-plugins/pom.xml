@@ -57,7 +57,6 @@
     </properties>
 
     <modules>
-        <module>config-generator</module>
         <module>consolidatedbundle-maven-plugin</module>
         <module>hk2-inhabitant-generator</module>
         <module>osgiversion-maven-plugin</module>

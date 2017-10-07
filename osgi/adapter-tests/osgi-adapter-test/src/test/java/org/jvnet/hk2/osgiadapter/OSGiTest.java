@@ -120,7 +120,6 @@ public class OSGiTest {
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID).artifactId("hk2-api").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID).artifactId("hk2-runlevel").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID).artifactId("hk2-core").version(projectVersion).startLevel(4)),
-                provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID).artifactId("hk2-config").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID).artifactId(
                         "hk2-locator").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.EXT_GROUP_ID).artifactId(
