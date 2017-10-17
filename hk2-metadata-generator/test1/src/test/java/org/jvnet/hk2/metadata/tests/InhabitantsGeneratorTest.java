@@ -525,8 +525,8 @@ public class InhabitantsGeneratorTest {
         {
             // This descriptor is the provide method for a factory with @ProxyForSameScope with no explicit value set (should be true)
             DescriptorImpl di = new DescriptorImpl();
-            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.RandomBeanStub_hk2Stub");
-            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.RandomBeanStub_hk2Stub");
+            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_RandomBeanStub_hk2Stub");
+            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_RandomBeanStub_hk2Stub");
             di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService$RandomBeanStub");
             di.setScope(Singleton.class.getName());
         
@@ -547,8 +547,8 @@ public class InhabitantsGeneratorTest {
         {
             // This is one of the generated stubs
             DescriptorImpl di = new DescriptorImpl();
-            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.NamedBeanStub_hk2Stub");
-            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.NamedBeanStub_hk2Stub");
+            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_NamedBeanStub_hk2Stub");
+            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_NamedBeanStub_hk2Stub");
             di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.NamedBean");
             di.setScope(Singleton.class.getName());
             di.setName("NamedBeanStub");
@@ -560,10 +560,10 @@ public class InhabitantsGeneratorTest {
         {
             // This is one of the generated stubs
             DescriptorImpl di = new DescriptorImpl();
-            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.AliceBeanStub_hk2Stub");
-            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.AliceBeanStub_hk2Stub");
+            di.setImplementation("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_AliceBeanStub_hk2Stub");
+            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.AbstractService_AliceBeanStub_hk2Stub");
             di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.faux.stub.NamedBean");
-            di.setScope(Singleton.class.getName());
+            di.setScope(PerLookup.class.getName());
             di.setName(ALICE);
             di.addQualifier(Named.class.getName());
         

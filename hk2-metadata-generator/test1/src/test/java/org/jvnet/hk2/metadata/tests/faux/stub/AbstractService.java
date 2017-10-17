@@ -42,6 +42,7 @@ package org.jvnet.hk2.metadata.tests.faux.stub;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.glassfish.hk2.api.PerLookup;
 import org.glassfish.hk2.api.Rank;
 import org.glassfish.hk2.utilities.Stub;
 import org.jvnet.hk2.annotations.Contract;
@@ -74,7 +75,7 @@ public abstract class AbstractService extends AbstractBaseService {
         }
     }
     
-    @Stub @Named(InhabitantsGeneratorTest.ALICE)
+    @Stub @Named(InhabitantsGeneratorTest.ALICE) @PerLookup
     public static abstract class AliceBeanStub implements NamedBean {
         @Override
         public String getName() {

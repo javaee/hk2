@@ -52,6 +52,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.inject.Named;
+import javax.inject.Scope;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -73,6 +74,7 @@ import javax.tools.Diagnostic.Kind;
 
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.metadata.generator.ServiceUtilities;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.hk2.utilities.Stub;
 import org.jvnet.hk2.annotations.ContractsProvided;
 
@@ -135,6 +137,14 @@ public class StubProcessor extends AbstractProcessor {
         return true;
     }
     
+    private static boolean isScopeAnnotation(AnnotationMirror annotation) {
+        DeclaredType dt = annotation.getAnnotationType();
+        TypeElement asElement = (TypeElement) dt.asElement();
+        Scope scope = asElement.getAnnotation(Scope.class);
+        
+        return (scope != null);
+    }
+    
     @SuppressWarnings("unchecked")
     private void writeStub(TypeElement clazz) throws IOException {
         Elements elementUtils = processingEnv.getElementUtils();
@@ -155,6 +165,7 @@ public class StubProcessor extends AbstractProcessor {
         boolean exceptions = false;
         String name = null;
         List<TypeElement> contractsProvided = null;
+        String scope = null;
         
         List<? extends AnnotationMirror> annotationMirrors = elementUtils.getAllAnnotationMirrors(clazz);
         for (AnnotationMirror annotationMirror : annotationMirrors) {
@@ -211,26 +222,71 @@ public class StubProcessor extends AbstractProcessor {
                     }
                 }
             }
+            else if (isScopeAnnotation(annotationMirror)) {
+                // Must be copied to the top of the stub
+                scope = "@" + annoQualifiedName;
+            }
         }
         
-        writeJavaFile(clazz, abstractMethods, name, exceptions, contractsProvided);
+        writeJavaFile(clazz, abstractMethods, name, exceptions, contractsProvided, scope);
     }
     
     private final static String STUB_EXTENSION = "_hk2Stub";
     
+    private String getFullyQualifiedStubName(TypeElement clazz) {
+        Elements elementUtils = processingEnv.getElementUtils();
+        
+        String clazzSimpleName = ServiceUtilities.nameToString(clazz.getSimpleName());
+        
+        Element enclosingElement = clazz.getEnclosingElement();
+        ElementKind kind = enclosingElement.getKind();
+        
+        PackageElement packageElement = elementUtils.getPackageOf(clazz);
+        String packageName = ServiceUtilities.nameToString(packageElement.getQualifiedName());
+        
+        if (ElementKind.PACKAGE.equals(kind)) {
+            if (packageName == null || packageName.isEmpty()) {
+                return clazzSimpleName;
+            }
+            
+            return packageName + "." + clazzSimpleName + STUB_EXTENSION;
+        }
+        
+        String enclosingName = ServiceUtilities.nameToString(enclosingElement.getSimpleName());
+        
+        // There is an enclosing element
+        if (packageName == null || packageName.isEmpty()) {
+            return enclosingName + "_" + clazzSimpleName + STUB_EXTENSION;
+        }
+        
+        return packageName + "." + enclosingName + "_" + clazzSimpleName + STUB_EXTENSION;
+        
+    }
+    
+    private static String getJustClassPart(String fullyQualifiedFileNameWithDots) {
+        int index = fullyQualifiedFileNameWithDots.lastIndexOf('.');
+        if (index < 0) {
+            return fullyQualifiedFileNameWithDots;
+        }
+        
+        return fullyQualifiedFileNameWithDots.substring(index + 1);
+    }
+    
     private void writeJavaFile(TypeElement clazz, Set<ExecutableElement> abstractMethods,
             String name,
             boolean exceptions,
-            List<TypeElement> contractsProvided) throws IOException {
+            List<TypeElement> contractsProvided,
+            String scope) throws IOException {
         Elements elementUtils = processingEnv.getElementUtils();
         
         PackageElement packageElement = elementUtils.getPackageOf(clazz);
         String packageName = ServiceUtilities.nameToString(packageElement.getQualifiedName());
         String clazzQualifiedName = ServiceUtilities.nameToString(clazz.getQualifiedName());
-        String fullyQualifiedStubName = clazzQualifiedName + STUB_EXTENSION;
+        String fullyQualifiedStubName = getFullyQualifiedStubName(clazz);
         String clazzSimpleName = ServiceUtilities.nameToString(clazz.getSimpleName());
         
-        String stubClazzName = ServiceUtilities.nameToString(clazz.getSimpleName()) + STUB_EXTENSION;
+        // String stubClazzName = ServiceUtilities.nameToString(clazz.getSimpleName()) + STUB_EXTENSION;
+        String stubClazzName = getJustClassPart(fullyQualifiedStubName);
         
         Filer filer = processingEnv.getFiler();
         
@@ -250,7 +306,7 @@ public class StubProcessor extends AbstractProcessor {
             }
             writer.append("import " + clazzQualifiedName + ";\n\n");
             
-            writer.append("@Service @Generated(\"org.glassfish.hk2.stub.generator.StubProcessor\")\n");
+            writer.append("@Service\n@Generated(\"org.glassfish.hk2.stub.generator.StubProcessor\")\n");
             if (name != null) {
                 writer.append("@Named(\"" + name + "\")\n");
             }
@@ -269,6 +325,9 @@ public class StubProcessor extends AbstractProcessor {
                     writer.append(cName);
                 }
                 writer.append("})\n");
+            }
+            if (scope != null) {
+                writer.append(scope + "\n");
             }
             writer.append("public class " + stubClazzName + " extends " + clazzSimpleName + " {\n");
             
@@ -402,7 +461,5 @@ public class StubProcessor extends AbstractProcessor {
             this.body = body;
         }
     }
-    
-    
 
 }
