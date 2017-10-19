@@ -41,12 +41,16 @@ package org.jvnet.hk2.metadata.tests;
 
 import java.sql.Connection;
 
+import org.glassfish.hk2.api.Rank;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.glassfish.hk2.utilities.Stub;
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvnet.hk2.annotations.Contract;
 import org.jvnet.hk2.metadata.tests.faux.stub.AbstractService;
 import org.jvnet.hk2.metadata.tests.faux.stub.ConnectionStub;
+import org.jvnet.hk2.metadata.tests.faux.stub.ExtendsThings;
 import org.jvnet.hk2.metadata.tests.faux.stub.FailingLargeInterfaceStub;
 import org.jvnet.hk2.metadata.tests.faux.stub.InterfaceWithTypes;
 import org.jvnet.hk2.metadata.tests.faux.stub.NamedBean;
@@ -292,6 +296,11 @@ public class StubTest {
         Assert.assertNotNull(stub);
         
         Assert.assertEquals(stub, conn);
+        
+    }
+    
+    @Stub @Contract @Rank(1)
+    public abstract static class Extender<G> implements ExtendsThings<String, Integer, Long, G> {
         
     }
 

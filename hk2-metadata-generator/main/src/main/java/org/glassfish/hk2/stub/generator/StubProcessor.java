@@ -41,6 +41,7 @@ package org.glassfish.hk2.stub.generator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +61,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -67,6 +69,7 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
@@ -74,8 +77,8 @@ import javax.tools.Diagnostic.Kind;
 
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.metadata.generator.ServiceUtilities;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.hk2.utilities.Stub;
+import org.glassfish.hk2.utilities.general.GeneralUtilities;
 import org.jvnet.hk2.annotations.ContractsProvided;
 
 /**
@@ -151,6 +154,7 @@ public class StubProcessor extends AbstractProcessor {
         
         Set<ExecutableElement> abstractMethods = new LinkedHashSet<ExecutableElement>();
         List<? extends Element> enclosedElements = elementUtils.getAllMembers(clazz);
+        Set<ExecutableElementDuplicateFinder> dupFinder = new HashSet<ExecutableElementDuplicateFinder>();
         for (Element enclosedElement : enclosedElements) {
             if (!ElementKind.METHOD.equals(enclosedElement.getKind())) continue;
             
@@ -158,6 +162,12 @@ public class StubProcessor extends AbstractProcessor {
             if (!modifiers.contains(Modifier.ABSTRACT)) continue;
             
             ExecutableElement executableMethod = (ExecutableElement) enclosedElement;
+            
+            ExecutableElementDuplicateFinder eedf = new ExecutableElementDuplicateFinder(executableMethod);
+            if (dupFinder.contains(eedf)) {
+                continue;
+            }
+            dupFinder.add(eedf);
             
             abstractMethods.add(executableMethod);
         }
@@ -459,6 +469,133 @@ public class StubProcessor extends AbstractProcessor {
         private TypeMirrorOutputs(String leftHandSide, String body) {
             this.leftHandSide = leftHandSide;
             this.body = body;
+        }
+    }
+    
+    private static class ExecutableElementDuplicateFinder {
+        private final ExecutableElement executableElement;
+        private final int hash;
+        
+        private ExecutableElementDuplicateFinder(ExecutableElement executableElement) {
+            this.executableElement = executableElement;
+            
+            int localHash = 0;
+            
+            Name name = executableElement.getSimpleName();
+            localHash ^= name.hashCode();
+            
+            TypeMirror returnMirror = executableElement.getReturnType();
+            localHash ^= getTypeHash(returnMirror).hashCode();
+            
+            for (VariableElement ve : executableElement.getParameters()) {
+                TypeMirror asType = ve.asType();
+                
+                localHash ^= getTypeHash(asType).hashCode();
+            }
+            
+            this.hash = localHash;
+        }
+        
+        private String getTypeHash(TypeMirror mirror) {
+            switch (mirror.getKind()) {
+            case DECLARED:
+                DeclaredType dt = (DeclaredType) mirror;
+                TypeElement te = (TypeElement) dt.asElement();
+                return ServiceUtilities.nameToString(te.getQualifiedName());
+            case ARRAY:
+                ArrayType at = (ArrayType) mirror;
+                TypeMirror atm = at.getComponentType();
+                return "[" + getTypeHash(atm) + "]";
+            case TYPEVAR:
+                return "java.lang.Object";
+            case BOOLEAN:
+                return "boolean";
+            case BYTE:
+                return "byte";
+            case CHAR:
+                return "char";
+            case DOUBLE:
+                return "double";
+            case FLOAT:
+                return "float";
+            case INT:
+                return "int";
+            case LONG:
+                return "long";
+            case SHORT:
+                return "short";
+            case VOID:
+                return "void";
+            case INTERSECTION:
+            case ERROR:
+            case EXECUTABLE:
+            case NONE:
+            case NULL:
+            case OTHER:
+            case PACKAGE:
+            case UNION:
+            case WILDCARD:
+            default:
+                return "";
+            }
+        }
+        
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            if (o == null) return false;
+            if (!(o instanceof ExecutableElementDuplicateFinder)) {
+                return false;
+            }
+            
+            ExecutableElementDuplicateFinder other = (ExecutableElementDuplicateFinder) o;
+            
+            Name name = executableElement.getSimpleName();
+            Name otherName = other.executableElement.getSimpleName();
+            
+            if (!GeneralUtilities.safeEquals(name, otherName)) {
+                return false;
+            }
+            
+            TypeMirror returnMirror = executableElement.getReturnType();
+            TypeMirror otherReturnMirror = other.executableElement.getReturnType();
+            
+            String returnMirrorAsString = getTypeHash(returnMirror);
+            String otherReturnMirrorAsString = getTypeHash(otherReturnMirror);
+            
+            if (!GeneralUtilities.safeEquals(returnMirrorAsString, otherReturnMirrorAsString)) {
+                return false;
+            }
+            
+            List<? extends VariableElement> params = executableElement.getParameters();
+            List<? extends VariableElement> otherParams = other.executableElement.getParameters();
+            
+            if (params.size() != otherParams.size()) {
+                return false;
+            }
+            
+            for (int lcv = 0; lcv < params.size(); lcv++) {
+                VariableElement ve = params.get(lcv);
+                VariableElement otherVE = otherParams.get(lcv);
+                
+                
+                TypeMirror asType = ve.asType();
+                TypeMirror otherAsType = otherVE.asType();
+                
+                
+                String asStringType = getTypeHash(asType);
+                String otherAsStringType = getTypeHash(otherAsType);
+                
+                if (!GeneralUtilities.safeEquals(asStringType, otherAsStringType)) {
+                    return false;
+                }
+            }
+            
+            return true;
         }
     }
 

@@ -603,6 +603,17 @@ public class InhabitantsGeneratorTest {
         
             EXPECTED_DESCRIPTORS.put(di, 0);
         }
+        
+        {
+            // This is one of the generated stubs
+            DescriptorImpl di = new DescriptorImpl();
+            di.setImplementation("org.jvnet.hk2.metadata.tests.StubTest_Extender_hk2Stub");
+            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.StubTest_Extender_hk2Stub");
+            di.addAdvertisedContract("org.jvnet.hk2.metadata.tests.StubTest$Extender");
+            di.setScope(Singleton.class.getName());
+        
+            EXPECTED_DESCRIPTORS.put(di, 1);
+        }
     }
     
     private void getAllDescriptorsFromInputStream(InputStream is, Set<DescriptorImpl> retVal) throws IOException {
