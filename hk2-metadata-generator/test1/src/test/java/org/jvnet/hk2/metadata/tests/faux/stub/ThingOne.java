@@ -46,5 +46,7 @@ package org.jvnet.hk2.metadata.tests.faux.stub;
 public interface ThingOne<K, V> {
     public V debugThing(K value);
     
+    public K commonThing();
+    
 
 }

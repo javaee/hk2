@@ -69,7 +69,6 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
@@ -526,15 +525,6 @@ public class StubProcessor extends AbstractProcessor {
                 return "short";
             case VOID:
                 return "void";
-            case INTERSECTION:
-            case ERROR:
-            case EXECUTABLE:
-            case NONE:
-            case NULL:
-            case OTHER:
-            case PACKAGE:
-            case UNION:
-            case WILDCARD:
             default:
                 return "";
             }

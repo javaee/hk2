@@ -47,4 +47,6 @@ import java.util.List;
  */
 public interface ThingTwo<E,F> extends ThingOne<E, F> {
     public int thingTwoMethod(E e, List<F> f);
+    
+    public E commonThing();
 }

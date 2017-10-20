@@ -300,7 +300,7 @@ public class StubTest {
     }
     
     @Stub @Contract @Rank(1)
-    public abstract static class Extender<G> implements ExtendsThings<String, Integer, Long, G> {
+    public abstract static class Extender<G> implements ExtendsThings<String, Integer, Long> {
         
     }
 

@@ -43,6 +43,6 @@ package org.jvnet.hk2.metadata.tests.faux.stub;
  * @author jwells
  *
  */
-public interface ExtendsThings<A,K,V,C> extends ThingThree<K,V>, ThingTwo<K,V>, ThingOne<K,V> {
+public interface ExtendsThings<A,K,V> extends ThingThree<K,V>, ThingTwo<K,V>, ThingOne<K,V> {
     public int myOwnMethod(int i, long l);
 }
