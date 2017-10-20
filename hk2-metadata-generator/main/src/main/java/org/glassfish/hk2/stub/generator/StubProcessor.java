@@ -41,6 +41,7 @@ package org.glassfish.hk2.stub.generator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -64,11 +65,13 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
@@ -147,8 +150,68 @@ public class StubProcessor extends AbstractProcessor {
         return (scope != null);
     }
     
+    private void getAllGenericMappings(TypeElement clazz,
+            Map<String, Map<String, String>> retVal,
+            Map<String, String> subclassMap) {
+        Types types = processingEnv.getTypeUtils();
+        
+        TypeMirror clazzTypeMirror = clazz.asType();
+        List<? extends TypeMirror> extendList = types.directSupertypes(clazzTypeMirror);
+        
+        for (TypeMirror tm : extendList) {
+            if (!TypeKind.DECLARED.equals(tm.getKind())) continue;
+            
+            DeclaredType dt = (DeclaredType) tm;
+            
+            List<? extends TypeMirror> mirrorTypes = dt.getTypeArguments();
+            
+            TypeElement te = (TypeElement) dt.asElement();
+            String extenderName = ServiceUtilities.nameToString(te.getQualifiedName());
+            
+            if (Object.class.getName().equals(extenderName) || retVal.containsKey(extenderName)) {
+                // We have already seen this one
+                continue;
+            }
+            
+            Map<String, String> typeParamToTypeMap = new HashMap<String, String>();
+            retVal.put(extenderName, typeParamToTypeMap);
+            
+            List<? extends TypeParameterElement> typeParameters = te.getTypeParameters();
+            
+            if (mirrorTypes.size() != typeParameters.size()) {
+                throw new AssertionError("The mirror types and parameter types of " +
+                  te.getQualifiedName() + " should match, they are " + mirrorTypes.size() +
+                  " and " + typeParameters.size());
+            }
+            
+            for (int lcv = 0; lcv < typeParameters.size(); lcv++) {
+                TypeMirror mirror = mirrorTypes.get(lcv);
+                TypeParameterElement typeParameter = typeParameters.get(lcv);
+                
+                String typeParameterName = ServiceUtilities.nameToString(typeParameter.getSimpleName());
+                String typeName = getTypeName(mirror, subclassMap);
+                
+                typeParamToTypeMap.put(typeParameterName, typeName);
+            }
+            
+            getAllGenericMappings(te, retVal, typeParamToTypeMap);
+        }
+    }
+    
+    private static boolean hasTypeParameters(TypeElement clazz) {
+        List<? extends TypeParameterElement> typeParams = clazz.getTypeParameters();
+        if (typeParams == null || typeParams.isEmpty()) return false;
+        return true;
+    }
+    
     @SuppressWarnings("unchecked")
     private void writeStub(TypeElement clazz) throws IOException {
+        Map<String, Map<String, String>> genericMapping = new HashMap<String, Map<String, String>>();
+        
+        if (!hasTypeParameters(clazz)) {
+            getAllGenericMappings(clazz, genericMapping, new HashMap<String, String>());
+        }
+        
         Elements elementUtils = processingEnv.getElementUtils();
         
         Set<ExecutableElement> abstractMethods = new LinkedHashSet<ExecutableElement>();
@@ -237,7 +300,7 @@ public class StubProcessor extends AbstractProcessor {
             }
         }
         
-        writeJavaFile(clazz, abstractMethods, name, exceptions, contractsProvided, scope);
+        writeJavaFile(clazz, abstractMethods, name, exceptions, contractsProvided, scope, genericMapping);
     }
     
     private final static String STUB_EXTENSION = "_hk2Stub";
@@ -285,7 +348,8 @@ public class StubProcessor extends AbstractProcessor {
             String name,
             boolean exceptions,
             List<TypeElement> contractsProvided,
-            String scope) throws IOException {
+            String scope,
+            Map<String, Map<String,String>> genericMapper) throws IOException {
         Elements elementUtils = processingEnv.getElementUtils();
         
         PackageElement packageElement = elementUtils.getPackageOf(clazz);
@@ -341,7 +405,7 @@ public class StubProcessor extends AbstractProcessor {
             writer.append("public class " + stubClazzName + " extends " + clazzSimpleName + " {\n");
             
             for (ExecutableElement abstractMethod : abstractMethods) {
-                writeAbstractMethod(abstractMethod, writer, exceptions); 
+                writeAbstractMethod(abstractMethod, genericMapper, writer, exceptions); 
             }
             
             writer.append("}\n");
@@ -349,13 +413,16 @@ public class StubProcessor extends AbstractProcessor {
         finally {
             writer.close();
         }
-        
-        
-        
     }
     
-    private void writeAbstractMethod(ExecutableElement abstractMethod, Writer writer, boolean exceptions) throws IOException {
+    private void writeAbstractMethod(ExecutableElement abstractMethod,
+            Map<String, Map<String, String>> genericMapper,
+            Writer writer, boolean exceptions) throws IOException {
         Set<Modifier> modifiers = abstractMethod.getModifiers();
+        
+        TypeElement element = (TypeElement) abstractMethod.getEnclosingElement();
+        String elementQName = ServiceUtilities.nameToString(element.getQualifiedName());
+        Map<String, String> typeMapper = genericMapper.get(elementQName);
         
         writer.append("    ");
         
@@ -367,7 +434,7 @@ public class StubProcessor extends AbstractProcessor {
         }
         
         TypeMirror returnType = abstractMethod.getReturnType();
-        TypeMirrorOutputs returnOutputs = typeMirrorToString(returnType, false);
+        TypeMirrorOutputs returnOutputs = typeMirrorToString(returnType, false, typeMapper);
         
         writer.append(returnOutputs.leftHandSide + " " + abstractMethod.getSimpleName() + "(");
         
@@ -380,7 +447,7 @@ public class StubProcessor extends AbstractProcessor {
             
             boolean varArgs = abstractMethod.isVarArgs() && ((lcv + 1) == numParams);
             
-            TypeMirrorOutputs paramOutputs = typeMirrorToString(variableAsType, varArgs);
+            TypeMirrorOutputs paramOutputs = typeMirrorToString(variableAsType, varArgs, typeMapper);
             if (lcv > 0) {
                 writer.append(", ");
             }
@@ -403,14 +470,16 @@ public class StubProcessor extends AbstractProcessor {
         }
     }
     
-    private TypeMirrorOutputs typeMirrorToString(TypeMirror mirror, boolean varArg) throws IOException {
+    private TypeMirrorOutputs typeMirrorToString(TypeMirror mirror,
+            boolean varArg,
+            Map<String, String> typeMap) throws IOException {
         Types typeUtils = processingEnv.getTypeUtils();
         
         TypeKind returnKind = mirror.getKind();
         
         switch (returnKind) {
         case ARRAY:
-            return new TypeMirrorOutputs(arrayTypeToString((ArrayType) mirror, varArg), "null");
+            return new TypeMirrorOutputs(arrayTypeToString((ArrayType) mirror, varArg, typeMap), "null");
         case VOID:
             return new TypeMirrorOutputs("void", "");
         case BOOLEAN:
@@ -433,14 +502,25 @@ public class StubProcessor extends AbstractProcessor {
             TypeElement element = (TypeElement) typeUtils.asElement(mirror);
             return new TypeMirrorOutputs(ServiceUtilities.nameToString(element.getQualifiedName()), "null");
         case TYPEVAR:
-            return new TypeMirrorOutputs("Object", "null");
+            if (typeMap == null) {
+                return new TypeMirrorOutputs("Object", "null");
+            }
+            
+            TypeVariable tv = (TypeVariable) mirror;
+            Element typeElement = tv.asElement();
+            String typeElementName = ServiceUtilities.nameToString(typeElement.getSimpleName());
+            
+            String leftSide = typeMap.get(typeElementName);
+            if (leftSide == null) leftSide = "Object";
+            
+            return new TypeMirrorOutputs(leftSide, "null");
         default:
             throw new IOException("Unknown kind: " + returnKind);
         }
         
     }
     
-    private String arrayTypeToString(ArrayType arrayType, boolean varArgs) throws IOException {
+    private String arrayTypeToString(ArrayType arrayType, boolean varArgs, Map<String, String> typeMapper) throws IOException {
         int numBraces = (varArgs) ? 0 : 1 ;
         
         TypeMirror arrayOfType = arrayType.getComponentType();
@@ -450,7 +530,7 @@ public class StubProcessor extends AbstractProcessor {
             arrayOfType = ((ArrayType) arrayOfType).getComponentType();
         }
         
-        TypeMirrorOutputs underlyingType = typeMirrorToString(arrayOfType, false);
+        TypeMirrorOutputs underlyingType = typeMirrorToString(arrayOfType, false, typeMapper);
         
         StringBuffer sb = new StringBuffer(underlyingType.leftHandSide);
         for (int lcv = 0; lcv < numBraces; lcv++) {
@@ -471,6 +551,53 @@ public class StubProcessor extends AbstractProcessor {
         }
     }
     
+    private static String getTypeName(TypeMirror mirror) {
+        return getTypeName(mirror, null);
+    }
+    
+    private static String getTypeName(TypeMirror mirror, Map<String, String> typeMap) {
+        switch (mirror.getKind()) {
+        case DECLARED:
+            DeclaredType dt = (DeclaredType) mirror;
+            TypeElement te = (TypeElement) dt.asElement();
+            return ServiceUtilities.nameToString(te.getQualifiedName());
+        case ARRAY:
+            ArrayType at = (ArrayType) mirror;
+            TypeMirror atm = at.getComponentType();
+            return getTypeName(atm) + "[]";
+        case TYPEVAR:
+            if (typeMap == null) return Object.class.getName();
+            
+            TypeVariable tv = (TypeVariable) mirror;
+            String tvSimpleName = ServiceUtilities.nameToString(tv.asElement().getSimpleName());
+            
+            String retVal = typeMap.get(tvSimpleName);
+            if (retVal == null) return Object.class.getName();
+            
+            return retVal;
+        case BOOLEAN:
+            return "boolean";
+        case BYTE:
+            return "byte";
+        case CHAR:
+            return "char";
+        case DOUBLE:
+            return "double";
+        case FLOAT:
+            return "float";
+        case INT:
+            return "int";
+        case LONG:
+            return "long";
+        case SHORT:
+            return "short";
+        case VOID:
+            return "void";
+        default:
+            return "";
+        }
+    }
+    
     private static class ExecutableElementDuplicateFinder {
         private final ExecutableElement executableElement;
         private final int hash;
@@ -484,51 +611,18 @@ public class StubProcessor extends AbstractProcessor {
             localHash ^= name.hashCode();
             
             TypeMirror returnMirror = executableElement.getReturnType();
-            localHash ^= getTypeHash(returnMirror).hashCode();
+            localHash ^= getTypeName(returnMirror).hashCode();
             
             for (VariableElement ve : executableElement.getParameters()) {
                 TypeMirror asType = ve.asType();
                 
-                localHash ^= getTypeHash(asType).hashCode();
+                localHash ^= getTypeName(asType).hashCode();
             }
             
             this.hash = localHash;
         }
         
-        private String getTypeHash(TypeMirror mirror) {
-            switch (mirror.getKind()) {
-            case DECLARED:
-                DeclaredType dt = (DeclaredType) mirror;
-                TypeElement te = (TypeElement) dt.asElement();
-                return ServiceUtilities.nameToString(te.getQualifiedName());
-            case ARRAY:
-                ArrayType at = (ArrayType) mirror;
-                TypeMirror atm = at.getComponentType();
-                return "[" + getTypeHash(atm) + "]";
-            case TYPEVAR:
-                return "java.lang.Object";
-            case BOOLEAN:
-                return "boolean";
-            case BYTE:
-                return "byte";
-            case CHAR:
-                return "char";
-            case DOUBLE:
-                return "double";
-            case FLOAT:
-                return "float";
-            case INT:
-                return "int";
-            case LONG:
-                return "long";
-            case SHORT:
-                return "short";
-            case VOID:
-                return "void";
-            default:
-                return "";
-            }
-        }
+        
         
         @Override
         public int hashCode() {
@@ -554,8 +648,8 @@ public class StubProcessor extends AbstractProcessor {
             TypeMirror returnMirror = executableElement.getReturnType();
             TypeMirror otherReturnMirror = other.executableElement.getReturnType();
             
-            String returnMirrorAsString = getTypeHash(returnMirror);
-            String otherReturnMirrorAsString = getTypeHash(otherReturnMirror);
+            String returnMirrorAsString = getTypeName(returnMirror);
+            String otherReturnMirrorAsString = getTypeName(otherReturnMirror);
             
             if (!GeneralUtilities.safeEquals(returnMirrorAsString, otherReturnMirrorAsString)) {
                 return false;
@@ -577,8 +671,8 @@ public class StubProcessor extends AbstractProcessor {
                 TypeMirror otherAsType = otherVE.asType();
                 
                 
-                String asStringType = getTypeHash(asType);
-                String otherAsStringType = getTypeHash(otherAsType);
+                String asStringType = getTypeName(asType);
+                String otherAsStringType = getTypeName(otherAsType);
                 
                 if (!GeneralUtilities.safeEquals(asStringType, otherAsStringType)) {
                     return false;
@@ -588,5 +682,4 @@ public class StubProcessor extends AbstractProcessor {
             return true;
         }
     }
-
 }
