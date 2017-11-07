@@ -82,6 +82,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertFalse(asBean._isSet("double-prop"));
         Assert.assertFalse(asBean._isSet("string-prop"));
         Assert.assertFalse(asBean._isSet("qname-prop"));
+        Assert.assertFalse(asBean._isSet("color"));
         
         Assert.assertEquals(13, db.getIntProp());
         Assert.assertEquals(13L, db.getLongProp());
@@ -93,6 +94,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
         Assert.assertEquals("13", db.getStringProp());
         Assert.assertEquals(new QName("http://qwerty.com/qwerty", "foo", "xyz"), db.getQNameProp());
+        Assert.assertEquals(Colors.GREEN, db.getColor());
         
         // Now set them all to the default values and make sure "isSet" works properly
         // db.setIntProp(13); we will have to trust that this one works
@@ -105,6 +107,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         db.setDoubleProp(13.00);
         db.setStringProp("13");
         db.setQNameProp(new QName("http://qwerty.com/qwerty", "foo", "xyz"));
+        db.setColor(Colors.GREEN);
         
         // Check the SET default values (for completeness)
         Assert.assertEquals(13, db.getIntProp());
@@ -117,6 +120,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
         Assert.assertEquals("13", db.getStringProp());
         Assert.assertEquals(new QName("http://qwerty.com/qwerty", "foo", "xyz"), db.getQNameProp());
+        Assert.assertEquals(Colors.GREEN, db.getColor());
         
         // First one still false, need to test this without a setter
         Assert.assertFalse(asBean._isSet("int-prop"));
@@ -131,6 +135,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertTrue(asBean._isSet("double-prop"));
         Assert.assertTrue(asBean._isSet("string-prop"));
         Assert.assertTrue(asBean._isSet("qname-prop"));
+        Assert.assertTrue(asBean._isSet("color"));
     }
     
     /**
@@ -153,6 +158,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertEquals(0, Double.compare(0.00, db.getDefaultDoubleProp()));
         Assert.assertEquals(null, db.getDefaultStringProp());
         Assert.assertNull(db.getDefaultQNameProp());
+        Assert.assertNull(db.getDefaultColor());
     }
     
     /**
@@ -170,6 +176,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertEquals(0, Float.compare((float) 13.00, db.getFloatProp()));
         Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
         Assert.assertEquals("13", db.getStringProp());
+        Assert.assertEquals(Colors.GREEN, db.getColor());
         
         Assert.assertEquals(0, db.getDefaultIntProp());
         Assert.assertEquals(0L, db.getDefaultLongProp());
@@ -180,6 +187,7 @@ private final static String DEFAULTING_FILE = "defaulted.xml";
         Assert.assertEquals(0, Float.compare((float) 0.00, db.getDefaultFloatProp()));
         Assert.assertEquals(0, Double.compare(0.00, db.getDefaultDoubleProp()));
         Assert.assertEquals(null, db.getDefaultStringProp());
+        Assert.assertNull(db.getDefaultColor());
         
     }
     

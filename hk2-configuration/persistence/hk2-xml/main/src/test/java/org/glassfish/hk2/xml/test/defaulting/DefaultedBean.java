@@ -105,6 +105,10 @@ public interface DefaultedBean {
     public QName getQNameProp();
     public void setQNameProp(QName qname);
     
+    @XmlElement(name="color", defaultValue="GREEN")
+    public Colors getColor();
+    public void setColor(Colors color);
+    
     // Below are testing the default defaults which should all be zero
     
     public int getDefaultIntProp();
@@ -117,4 +121,5 @@ public interface DefaultedBean {
     public double getDefaultDoubleProp();
     public String getDefaultStringProp();
     public QName getDefaultQNameProp();
+    public Colors getDefaultColor();
 }
