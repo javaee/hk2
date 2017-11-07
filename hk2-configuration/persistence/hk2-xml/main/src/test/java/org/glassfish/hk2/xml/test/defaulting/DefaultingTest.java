@@ -48,6 +48,7 @@ import org.glassfish.hk2.configuration.hub.api.Hub;
 import org.glassfish.hk2.xml.api.XmlHk2ConfigurationBean;
 import org.glassfish.hk2.xml.api.XmlRootHandle;
 import org.glassfish.hk2.xml.api.XmlService;
+import org.glassfish.hk2.xml.spi.XmlServiceParser;
 import org.glassfish.hk2.xml.test.beans.DomainBean;
 import org.glassfish.hk2.xml.test.beans.SSLManagerBean;
 import org.glassfish.hk2.xml.test.beans.SSLManagerBeanCustomizer;
@@ -64,6 +65,8 @@ import org.junit.Test;
 public class DefaultingTest {
     private final static String DEFAULTING_FILE = "defaulted.xml";
     
+    private final DefaultingCommon commons = new DefaultingCommon();
+    
     /**
      * Tests that we can default values with JAXB 
      * @throws Exception
@@ -71,73 +74,21 @@ public class DefaultingTest {
     @Test // @org.junit.Ignore
     public void testDefaultedValues() throws Exception {
         ServiceLocator locator = Utilities.createLocator();
-        XmlService xmlService = locator.getService(XmlService.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.DEFAULT_PARSING_SERVICE);
         
-        URL url = getClass().getClassLoader().getResource(DEFAULTING_FILE);
+        commons.testDefaultedValues(xmlService);
+    }
+    
+    /**
+     * Tests that we can default values with JAXB 
+     * @throws Exception
+     */
+    @Test // @org.junit.Ignore
+    public void testDefaultedValuesStream() throws Exception {
+        ServiceLocator locator = Utilities.createDomLocator();
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.STREAM_PARSING_SERVICE);
         
-        XmlRootHandle<DefaultedBean> rootHandle = xmlService.unmarshal(url.toURI(), DefaultedBean.class);
-        DefaultedBean db = rootHandle.getRoot();
-        
-        XmlHk2ConfigurationBean asBean = (XmlHk2ConfigurationBean) db;
-        Assert.assertFalse(asBean._isSet("int-prop"));
-        Assert.assertFalse(asBean._isSet("long-prop"));
-        Assert.assertFalse(asBean._isSet("short-prop"));
-        Assert.assertFalse(asBean._isSet("byte-prop"));
-        Assert.assertFalse(asBean._isSet("boolean-prop"));
-        Assert.assertFalse(asBean._isSet("char-prop"));
-        Assert.assertFalse(asBean._isSet("float-prop"));
-        Assert.assertFalse(asBean._isSet("double-prop"));
-        Assert.assertFalse(asBean._isSet("string-prop"));
-        Assert.assertFalse(asBean._isSet("qname-prop"));
-        
-        Assert.assertEquals(13, db.getIntProp());
-        Assert.assertEquals(13L, db.getLongProp());
-        Assert.assertEquals((byte) 13, db.getByteProp());
-        Assert.assertEquals(true, db.isBooleanProp());
-        Assert.assertEquals((short) 13, db.getShortProp());
-        Assert.assertEquals('f', db.getCharProp());
-        Assert.assertEquals(0, Float.compare((float) 13.00, db.getFloatProp()));
-        Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
-        Assert.assertEquals("13", db.getStringProp());
-        Assert.assertEquals(new QName("http://qwerty.com/qwerty", "foo", "xyz"), db.getQNameProp());
-        
-        // Now set them all to the default values and make sure "isSet" works properly
-        // db.setIntProp(13); we will have to trust that this one works
-        db.setLongProp(13L);
-        db.setByteProp((byte) 13);
-        db.setBooleanProp(true);
-        db.setShortProp((short) 13); 
-        db.setCharProp('f');
-        db.setFloatProp((float) 13.00);
-        db.setDoubleProp(13.00);
-        db.setStringProp("13");
-        db.setQNameProp(new QName("http://qwerty.com/qwerty", "foo", "xyz"));
-        
-        // Check the SET default values (for completeness)
-        Assert.assertEquals(13, db.getIntProp());
-        Assert.assertEquals(13L, db.getLongProp());
-        Assert.assertEquals((byte) 13, db.getByteProp());
-        Assert.assertEquals(true, db.isBooleanProp());
-        Assert.assertEquals((short) 13, db.getShortProp());
-        Assert.assertEquals('f', db.getCharProp());
-        Assert.assertEquals(0, Float.compare((float) 13.00, db.getFloatProp()));
-        Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
-        Assert.assertEquals("13", db.getStringProp());
-        Assert.assertEquals(new QName("http://qwerty.com/qwerty", "foo", "xyz"), db.getQNameProp());
-        
-        // First one still false, need to test this without a setter
-        Assert.assertFalse(asBean._isSet("int-prop"));
-        
-        // But all the rest should be true now
-        Assert.assertTrue(asBean._isSet("long-prop"));
-        Assert.assertTrue(asBean._isSet("short-prop"));
-        Assert.assertTrue(asBean._isSet("byte-prop"));
-        Assert.assertTrue(asBean._isSet("boolean-prop"));
-        Assert.assertTrue(asBean._isSet("char-prop"));
-        Assert.assertTrue(asBean._isSet("float-prop"));
-        Assert.assertTrue(asBean._isSet("double-prop"));
-        Assert.assertTrue(asBean._isSet("string-prop"));
-        Assert.assertTrue(asBean._isSet("qname-prop"));
+        commons.testDefaultedValues(xmlService);
     }
     
     /**
@@ -147,23 +98,21 @@ public class DefaultingTest {
     @Test // @org.junit.Ignore
     public void testDefaultDefaultedValues() throws Exception {
         ServiceLocator locator = Utilities.createLocator();
-        XmlService xmlService = locator.getService(XmlService.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.DEFAULT_PARSING_SERVICE);
         
-        URL url = getClass().getClassLoader().getResource(DEFAULTING_FILE);
+        commons.testDefaultDefaultedValues(xmlService);
+    }
+    
+    /**
+     * Tests that we can default values with JAXB 
+     * @throws Exception
+     */
+    @Test // @org.junit.Ignore
+    public void testDefaultDefaultedValuesString() throws Exception {
+        ServiceLocator locator = Utilities.createDomLocator();
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.STREAM_PARSING_SERVICE);
         
-        XmlRootHandle<DefaultedBean> rootHandle = xmlService.unmarshal(url.toURI(), DefaultedBean.class);
-        DefaultedBean db = rootHandle.getRoot();
-        
-        Assert.assertEquals(0, db.getDefaultIntProp());
-        Assert.assertEquals(0L, db.getDefaultLongProp());
-        Assert.assertEquals((byte) 0, db.getDefaultByteProp());
-        Assert.assertEquals(false, db.isDefaultBooleanProp());
-        Assert.assertEquals((short) 0, db.getDefaultShortProp());
-        Assert.assertEquals((char) 0, db.getDefaultCharProp());
-        Assert.assertEquals(0, Float.compare((float) 0.00, db.getDefaultFloatProp()));
-        Assert.assertEquals(0, Double.compare(0.00, db.getDefaultDoubleProp()));
-        Assert.assertEquals(null, db.getDefaultStringProp());
-        Assert.assertNull(db.getDefaultQNameProp());
+        commons.testDefaultDefaultedValues(xmlService);
     }
     
     /**
@@ -172,30 +121,20 @@ public class DefaultingTest {
     @Test // @org.junit.Ignore
     public void testCanGetValuesFromDynamicallyCreatedBean() {
         ServiceLocator locator = Utilities.createLocator();
-        XmlService xmlService = locator.getService(XmlService.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.DEFAULT_PARSING_SERVICE);
         
-        DefaultedBean db = xmlService.createBean(DefaultedBean.class);
+        commons.testCanGetValuesFromDynamicallyCreatedBean(xmlService);
+    }
+    
+    /**
+     * Tests that defaults work in a dynamically created bean
+     */
+    @Test // @org.junit.Ignore
+    public void testCanGetValuesFromDynamicallyCreatedBeanStream() {
+        ServiceLocator locator = Utilities.createDomLocator();
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.STREAM_PARSING_SERVICE);
         
-        Assert.assertEquals(13, db.getIntProp());
-        Assert.assertEquals(13L, db.getLongProp());
-        Assert.assertEquals((byte) 13, db.getByteProp());
-        Assert.assertEquals(true, db.isBooleanProp());
-        Assert.assertEquals((short) 13, db.getShortProp());
-        Assert.assertEquals('f', db.getCharProp());
-        Assert.assertEquals(0, Float.compare((float) 13.00, db.getFloatProp()));
-        Assert.assertEquals(0, Double.compare(13.00, db.getDoubleProp()));
-        Assert.assertEquals("13", db.getStringProp());
-        
-        Assert.assertEquals(0, db.getDefaultIntProp());
-        Assert.assertEquals(0L, db.getDefaultLongProp());
-        Assert.assertEquals((byte) 0, db.getDefaultByteProp());
-        Assert.assertEquals(false, db.isDefaultBooleanProp());
-        Assert.assertEquals((short) 0, db.getDefaultShortProp());
-        Assert.assertEquals((char) 0, db.getDefaultCharProp());
-        Assert.assertEquals(0, Float.compare((float) 0.00, db.getDefaultFloatProp()));
-        Assert.assertEquals(0, Double.compare(0.00, db.getDefaultDoubleProp()));
-        Assert.assertEquals(null, db.getDefaultStringProp());
-        
+        commons.testCanGetValuesFromDynamicallyCreatedBean(xmlService);
     }
     
     /**
@@ -209,21 +148,25 @@ public class DefaultingTest {
                 SSLManagerBeanCustomizer.class,
                 SecurityManagerBeanDefaulter.class);
         
-        XmlService xmlService = locator.getService(XmlService.class);
-        Hub hub = locator.getService(Hub.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.DEFAULT_PARSING_SERVICE);
         
-        URL url = getClass().getClassLoader().getResource(MergeTest.DOMAIN1_FILE);
+        commons.testDefaultingViaServiceWorks(locator, xmlService);
+    }
+    
+    /**
+     * Ensures that we can default beans via an InstanceLifecycleListener
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDefaultingViaServiceWorksStream() throws Exception {
+        ServiceLocator locator = Utilities.createDomLocator(
+                SSLManagerBeanCustomizer.class,
+                SecurityManagerBeanDefaulter.class);
         
-        XmlRootHandle<DomainBean> rootHandle = xmlService.unmarshal(url.toURI(), DomainBean.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.STREAM_PARSING_SERVICE);
         
-        MergeTest.verifyDomain1Xml(rootHandle, hub, locator, true);
-        
-        SecurityManagerBean smb = locator.getService(SecurityManagerBean.class);
-        Assert.assertNotNull(smb);
-        
-        Assert.assertNotNull(smb.getSSLManager());
-        
-        Assert.assertNotNull(locator.getService(SSLManagerBean.class));
+        commons.testDefaultingViaServiceWorks(locator, xmlService);
     }
     
     /**
@@ -238,36 +181,28 @@ public class DefaultingTest {
                 SSLManagerBeanCustomizer.class,
                 SecurityManagerBeanDefaulter.class);
         
-        XmlService xmlService = locator.getService(XmlService.class);
-        Hub hub = locator.getService(Hub.class);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.DEFAULT_PARSING_SERVICE);
         
-        URL url = getClass().getClassLoader().getResource(MergeTest.DOMAIN1_FILE);
+        commons.testDefaultingViaAddWorks(locator, xmlService);
         
-        XmlRootHandle<DomainBean> rootHandle = xmlService.unmarshal(url.toURI(), DomainBean.class);
+    }
+    
+    /**
+     * Ensures that we can default beans via an InstanceLifecycleListener
+     * 
+     * @throws Exception
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testDefaultingViaAddWorksStream() throws Exception {
+        ServiceLocator locator = Utilities.createDomLocator(
+                SSLManagerBeanCustomizer.class,
+                SecurityManagerBeanDefaulter.class);
         
-        MergeTest.verifyDomain1Xml(rootHandle, hub, locator, true);
+        XmlService xmlService = locator.getService(XmlService.class, XmlServiceParser.STREAM_PARSING_SERVICE);
         
-        DomainBean domain = rootHandle.getRoot();
+        commons.testDefaultingViaAddWorks(locator, xmlService);
         
-        // Removes the securityManager
-        domain.setSecurityManager(null);
-        
-        // Just makes sure the SSLManager added as a default is gone
-        Assert.assertNull(locator.getService(SSLManagerBean.class));
-        
-        SecurityManagerBean smb = xmlService.createBean(SecurityManagerBean.class);
-        
-        domain.setSecurityManager(smb);
-        
-        smb = domain.getSecurityManager();
-        Assert.assertNotNull(smb);
-        
-        // For this test to fail properly this MUST be before the lookup in the locator
-        Assert.assertNotNull(smb.getSSLManager());
-        Assert.assertNotNull(locator.getService(SecurityManagerBean.class));
-        
-        Assert.assertNotNull(smb.getSSLManager());
-        Assert.assertNotNull(locator.getService(SSLManagerBean.class));
     }
 
 }
