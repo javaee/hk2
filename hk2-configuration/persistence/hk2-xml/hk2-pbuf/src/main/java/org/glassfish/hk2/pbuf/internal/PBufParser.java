@@ -109,11 +109,11 @@ public class PBufParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#parseRoot(org.glassfish.hk2.xml.spi.Model, java.net.URI, javax.xml.bind.Unmarshaller.Listener)
      */
     @Override
-    public <T> T parseRoot(Model rootModel, URI location, Listener listener)
+    public <T> T parseRoot(Model rootModel, URI location, Listener listener, Map<String, Object> options)
             throws Exception {
         InputStream is = location.toURL().openStream();
         try {
-            return parseRoot(rootModel, is, listener);
+            return parseRoot(rootModel, is, listener, options);
         }
         finally {
             is.close();
@@ -126,7 +126,7 @@ public class PBufParser implements XmlServiceParser {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T parseRoot(Model rootModel, InputStream input,
-            Listener listener) throws Exception {
+            Listener listener, Map<String, Object> options) throws Exception {
         try {
             Set<Descriptors.FileDescriptor> protoFiles = new HashSet<Descriptors.FileDescriptor>();
             convertAllModels((ModelImpl) rootModel, protoFiles);
@@ -187,7 +187,7 @@ public class PBufParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#marshal(java.io.OutputStream, org.glassfish.hk2.xml.api.XmlRootHandle)
      */
     @Override
-    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root)
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root, Map<String, Object> options)
             throws IOException {
         T rootObject = root.getRoot();
         if (rootObject == null) return;

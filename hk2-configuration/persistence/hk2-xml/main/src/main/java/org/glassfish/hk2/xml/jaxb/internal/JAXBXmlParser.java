@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -74,7 +75,7 @@ public class JAXBXmlParser implements XmlServiceParser {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T parseRoot(Model rootModel, URI location, Listener listener) throws Exception {
+    public <T> T parseRoot(Model rootModel, URI location, Listener listener, Map<String, Object> options) throws Exception {
         Class<?> clazz = rootModel.getProxyAsClass();
         
         JAXBContext context = JAXBContext.newInstance(clazz);
@@ -92,7 +93,7 @@ public class JAXBXmlParser implements XmlServiceParser {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener) throws Exception {
+    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener, Map<String, Object> options) throws Exception {
         Class<?> clazz = rootModel.getProxyAsClass();
         
         JAXBContext context = JAXBContext.newInstance(clazz);
@@ -117,7 +118,7 @@ public class JAXBXmlParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#marshall(java.io.OutputStream, org.glassfish.hk2.xml.api.XmlRootHandle)
      */
     @Override
-    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle)
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle, Map<String, Object> options)
             throws IOException {
         T root = rootHandle.getRoot();
         if (root == null) return;

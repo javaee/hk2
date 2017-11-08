@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Map;
 
 import javax.xml.bind.Unmarshaller;
 
@@ -75,9 +76,10 @@ public interface XmlServiceParser {
      * @param rootModel The Model object of the root to be parsed
      * @param location The location of the file to parse
      * @param listener A listener that must be called via the contract of Unmarshaller.Listener
+     * @param options optional (possibly null) options from the caller
      * @return The root object with all fields filled in from the given document
      */
-    public <T> T parseRoot(Model rootModel, URI location, Unmarshaller.Listener listener) throws Exception;
+    public <T> T parseRoot(Model rootModel, URI location, Unmarshaller.Listener listener, Map<String, Object> options) throws Exception;
     
     /**
      * This method must return an instance of the given class as the root of
@@ -86,9 +88,10 @@ public interface XmlServiceParser {
      * @param rootModel The Model object of the root to be parsed
      * @param input A non-null input stream.  This stream will NOT be closed by this method
      * @param listener A listener that must be called via the contract of Unmarshaller.Listener
+     * @param options optional (possibly null) options from the caller
      * @return The root object with all fields filled in from the given document
      */
-    public <T> T parseRoot(Model rootModel, InputStream input, Unmarshaller.Listener listener) throws Exception;
+    public <T> T parseRoot(Model rootModel, InputStream input, Unmarshaller.Listener listener, Map<String, Object> options) throws Exception;
     
     
     /**
@@ -109,8 +112,9 @@ public interface XmlServiceParser {
      * @param outputStream A non-closed output stream.  This method will
      * not close the output stream
      * @param root The root of the tree to marshall
+     * @param options optional (possibly null) options from the caller
      * @throws IOException On any exception that might happen
      */
-    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root) throws IOException;
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root, Map<String, Object> options) throws IOException;
 
 }

@@ -264,11 +264,11 @@ public class JsonParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#parseRoot(org.glassfish.hk2.xml.spi.Model, java.net.URI, javax.xml.bind.Unmarshaller.Listener)
      */
     @Override
-    public <T> T parseRoot(Model rootModel, URI location, Listener listener)
+    public <T> T parseRoot(Model rootModel, URI location, Listener listener, Map<String, Object> options)
             throws Exception {
         InputStream input = location.toURL().openStream();
         try {
-            return parseRoot(rootModel, input, listener);
+            return parseRoot(rootModel, input, listener, options);
         }
         finally {
             input.close();
@@ -280,7 +280,7 @@ public class JsonParser implements XmlServiceParser {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener)
+    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener, Map<String, Object> options)
             throws Exception {
         javax.json.stream.JsonParser parser = Json.createParser(input);
         
@@ -322,7 +322,7 @@ public class JsonParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#marshall(java.io.OutputStream, org.glassfish.hk2.xml.api.XmlRootHandle)
      */
     @Override
-    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle)
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle, Map<String, Object> options)
             throws IOException {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         

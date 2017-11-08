@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 
@@ -91,6 +92,24 @@ public interface XmlService {
             boolean advertiseInRegistry, boolean advertiseInHub);
     
     /**
+     * Unmarshalls the given URI using the jaxb annotated interface.
+     * Will use the registered implementation of {@link org.glassfish.hk2.xml.spi.XmlServiceParser}
+     * to parse the file.
+     * 
+     * @param uri The non-null URI whereby to find the xml corresponding to the class
+     * @param jaxbAnnotatedClassOrInterface The non-null interface corresponding to the Xml to be parsed
+     * @param advertiseInRegistry if true the entire tree of parsed xml will be added to the
+     * ServiceLocator
+     * @param advertiseInHub if true the entire tree of parsed xml will be added to the
+     * HK2 configuration Hub (as bean-like maps)
+     * @param options optional (possibly null) options from the caller
+     * @return A non-null handle that can be used to get the unmarshalled data or perform
+     * other tasks
+     */
+    public <T> XmlRootHandle<T> unmarshal(URI uri, Class<T> jaxbAnnotatedInterface,
+            boolean advertiseInRegistry, boolean advertiseInHub, Map<String, Object> options);
+    
+    /**
      * Unmarshals an XML stream using the jaxb annotated interface.
      * Will use a built-in algorithm to read the stream
      * 
@@ -105,6 +124,23 @@ public interface XmlService {
      */
     public <T> XmlRootHandle<T> unmarshal(XMLStreamReader reader, Class<T> jaxbAnnotatedInterface,
             boolean advertiseInRegistry, boolean advertiseInHub);
+    
+    /**
+     * Unmarshals an XML stream using the jaxb annotated interface.
+     * Will use a built-in algorithm to read the stream
+     * 
+     * @param reader The non-null XMLStreamReader representing the XML to be read
+     * @param jaxbAnnotatedClassOrInterface The non-null interface corresponding to the Xml to be parsed
+     * @param advertiseInRegistry if true the entire tree of parsed xml will be added to the
+     * ServiceLocator
+     * @param advertiseInHub if true the entire tree of parsed xml will be added to the
+     * HK2 configuration Hub (as bean-like maps)
+     * @param options optional (possibly null) options from the caller
+     * @return A non-null handle that can be used to get the unmarshalled data or perform
+     * other tasks
+     */
+    public <T> XmlRootHandle<T> unmarshal(XMLStreamReader reader, Class<T> jaxbAnnotatedInterface,
+            boolean advertiseInRegistry, boolean advertiseInHub, Map<String, Object> options);
     
     /**
      * Unmarshals an XML stream using the jaxb annotated interface.
@@ -136,6 +172,24 @@ public interface XmlService {
      */
     public <T> XmlRootHandle<T> unmarshal(InputStream inputStream, Class<T> jaxbAnnotatedInterface,
             boolean advertiseInRegistry, boolean advertiseInHub);
+    
+    /**
+     * Unmarshals an XML stream using the jaxb annotated interface.
+     * Will use the registered implementation of {@link org.glassfish.hk2.xml.spi.XmlServiceParser}
+     * to parse the file.
+     * 
+     * @param inputStream The non-null input stream to read.  Will not close this stream
+     * @param jaxbAnnotatedClassOrInterface The non-null interface corresponding to the Xml to be parsed
+     * @param advertiseInRegistry if true the entire tree of parsed xml will be added to the
+     * ServiceLocator
+     * @param advertiseInHub if true the entire tree of parsed xml will be added to the
+     * HK2 configuration Hub (as bean-like maps)
+     * @param options optional (possibly null) options from the caller
+     * @return A non-null handle that can be used to get the unmarshalled data or perform
+     * other tasks
+     */
+    public <T> XmlRootHandle<T> unmarshal(InputStream inputStream, Class<T> jaxbAnnotatedInterface,
+            boolean advertiseInRegistry, boolean advertiseInHub, Map<String, Object> options);
     
     /**
      * This creates an empty handle (root will initially be null) corresponding to
@@ -194,5 +248,24 @@ public interface XmlService {
      * @throws IOException On any exception that might happen
      */
     public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle) throws IOException;
+    
+    /**
+     * Will marshal the given tree into the given stream.  This can
+     * be called with a rootHandle that was NOT created with this
+     * XmlService implementation.  In that way different parsing
+     * formats can potentially be converted into each other.  For
+     * example an XML document can be converted to equivalent JSON.
+     * Not all transformations may be possible.  This method
+     * will hold the read lock of the rootHandle so it cannot be
+     * modified while being written to the output stream
+     * 
+     * @param outputStream A non-closed output stream.  This method will
+     * not close the output stream
+     * @param rootHandle A non-null root handle that may or may not
+     * have been created with this XmlService implementation
+     * @param options optional (possibly null) options from the caller
+     * @throws IOException On any exception that might happen
+     */
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> rootHandle, Map<String, Object> options) throws IOException;
 
 }

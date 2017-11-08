@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This represents XML data and a JavaBean tree
@@ -301,4 +302,17 @@ public interface XmlRootHandle<T> {
      * @throws IOException On any exception that might happen
      */
     public void marshal(OutputStream outputStream) throws IOException;
+    
+    /**
+     * Will marshal this tree into the given stream.  Will hold the read
+     * lock of this tree while it does so that the tree cannot change
+     * underneath while it is being written out.  It will use a basic
+     * indentation and new-line scheme
+     * 
+     * @param outputStream A non-closed output stream.  This method will
+     * not close the output stream
+     * @param options optional (possibly null) options from the caller
+     * @throws IOException On any exception that might happen
+     */
+    public void marshal(OutputStream outputStream, Map<String, Object> options) throws IOException;
 }

@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,11 +79,11 @@ public class DomXmlParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#parseRoot(java.lang.Class, java.net.URI, javax.xml.bind.Unmarshaller.Listener)
      */
     @Override
-    public <T> T parseRoot(Model rootModel, URI location, Listener listener)
+    public <T> T parseRoot(Model rootModel, URI location, Listener listener, Map<String, Object> options)
             throws Exception {
         InputStream urlStream = location.toURL().openStream();
         try {
-            return parseRoot(rootModel, urlStream, listener);
+            return parseRoot(rootModel, urlStream, listener, options);
         }
         finally {
             urlStream.close();
@@ -91,7 +92,7 @@ public class DomXmlParser implements XmlServiceParser {
     
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener)
+    public <T> T parseRoot(Model rootModel, InputStream input, Listener listener, Map<String, Object> options)
             throws Exception {
         XMLStreamReader xmlStreamReader = xif.createXMLStreamReader(input);
         try {
@@ -114,7 +115,7 @@ public class DomXmlParser implements XmlServiceParser {
      * @see org.glassfish.hk2.xml.spi.XmlServiceParser#marshall(java.io.OutputStream, org.glassfish.hk2.xml.api.XmlRootHandle)
      */
     @Override
-    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root)
+    public <T> void marshal(OutputStream outputStream, XmlRootHandle<T> root, Map<String, Object> options)
             throws IOException {
         XmlStreamImpl.marshall(outputStream, root);
     }

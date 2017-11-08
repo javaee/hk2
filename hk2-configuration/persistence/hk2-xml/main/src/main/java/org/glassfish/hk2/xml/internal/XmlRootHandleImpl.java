@@ -43,9 +43,7 @@ package org.glassfish.hk2.xml.internal;
 import java.beans.VetoableChangeListener;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -402,11 +400,16 @@ public class XmlRootHandleImpl<T> implements XmlRootHandle<T> {
         return (changeControl.findValidator() != null);
     }
     
+    @Override
+    public void marshal(OutputStream outputStream) throws IOException {
+        marshal(outputStream, null);
+    }
+    
     /* (non-Javadoc)
      * @see org.glassfish.hk2.xml.api.XmlRootHandle#marshall(java.io.OutputStream)
      */
     @Override
-    public void marshal(OutputStream outputStream) throws IOException {
+    public void marshal(OutputStream outputStream, Map<String, Object> options) throws IOException {
         if (changeControl == null) {
             throw new IllegalStateException("marshall May only be called on a fully initialized root handle " + this);
         }
@@ -419,7 +422,7 @@ public class XmlRootHandleImpl<T> implements XmlRootHandle<T> {
                 return;
             }
         
-            parser.marshal(outputStream, this);
+            parser.marshal(outputStream, this, options);
         }
         finally {
             changeControl.getReadLock().unlock();
