@@ -50,6 +50,16 @@ public class PBufUtilities {
     /** The name of the XmlService that uses PBuf as its encoding/decoding format */
     public final static String PBUF_SERVICE_NAME = "PBufXmlParser";
     
+    /**
+     * This option controls whether or not the marshaller/unmarshaller puts an
+     * int32 at the front of the encoding for the length or expects the int32
+     * when reading the stream.  The value must be of type {@link Boolean}.
+     * By default this is true (an int32 is prepended for length when writing
+     * and expected when reading).  If this value is false then the InputStream
+     * given to the unmarshaller must end when the protobuf ends
+     */
+    public final static String PBUF_OPTION_INT32_HEADER = "PbufInt32Header";
+    
     private static boolean isDup(MultiException me) {
         if (me == null) return false;
         

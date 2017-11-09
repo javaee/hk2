@@ -40,6 +40,7 @@
 package org.glassfish.hk2.pbuf.internal;
 
 import java.beans.Introspector;
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,32 +139,52 @@ public class PBufParser implements XmlServiceParser {
             throw new IOException(e);
         }
         
+        boolean useLength = getPrependSize(options);
         
-        CodedInputStream cis;
-        synchronized (cisCache) {
-            cis = cisCache.get(input);
-            if (cis == null) {
-                cis = CodedInputStream.newInstance(input);
-                cisCache.put(input, cis);
+        byte[] rawBytes;
+        if (useLength) {
+            CodedInputStream cis;
+            synchronized (cisCache) {
+                cis = cisCache.get(input);
+                if (cis == null) {
+                    cis = CodedInputStream.newInstance(input);
+                    cisCache.put(input, cis);
+                }
             }
-        }
             
-        int size;
-        try {
-            size = cis.readInt32();
-        }
-        catch (InvalidProtocolBufferException ipbe) {
-            MultiException me = new MultiException(new EOFException());
-            me.addError(ipbe);
+            int size;
+            try {
+                size = cis.readInt32();
+            }
+            catch (InvalidProtocolBufferException ipbe) {
+                MultiException me = new MultiException(new EOFException());
+                me.addError(ipbe);
                 
-            throw me;
-        }
+                throw me;
+            }
             
-        if (size <= 0) {
-            throw new AssertionError("Invalid size of protocol buffer on the wire: " + size);
-        }
+            if (size <= 0) {
+                throw new AssertionError("Invalid size of protocol buffer on the wire: " + size);
+            }
             
-        byte[] rawBytes = cis.readRawBytes(size);
+           rawBytes = cis.readRawBytes(size);
+        }
+        else {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                byte buffer[] = new byte[1000];
+                
+                int readLength;
+                while ((readLength = input.read(buffer)) > 0) {
+                    baos.write(buffer, 0, readLength);
+                }
+            }
+            finally {
+                baos.close();
+            }
+            
+            rawBytes = baos.toByteArray();
+        }
             
         DynamicMessage message = internalUnmarshal((ModelImpl) rootModel, rawBytes);
         
@@ -208,7 +229,7 @@ public class PBufParser implements XmlServiceParser {
         
         DynamicMessage dynamicMessage = internalMarshal(rootBean);
         int size = dynamicMessage.getSerializedSize();
-            
+        
         CodedOutputStream cos;
         synchronized (cosCache) {
             cos = cosCache.get(outputStream);
@@ -218,9 +239,14 @@ public class PBufParser implements XmlServiceParser {
                 cosCache.put(outputStream, cos);
             }
         }
-            
+        
+        boolean prependSize = getPrependSize(options);
+        
         try {
-          cos.writeInt32NoTag(size);
+          if (prependSize) {
+              cos.writeInt32NoTag(size);
+          }
+          
           dynamicMessage.writeTo(cos);
         }
         finally {
@@ -811,6 +837,15 @@ public class PBufParser implements XmlServiceParser {
         }
         
         return field;
+    }
+    
+    private static boolean getPrependSize(Map<String, Object> options) {
+        if (options == null) return true;
+        
+        Boolean val = (Boolean) options.get(PBufUtilities.PBUF_OPTION_INT32_HEADER);
+        if (val == null) return true;
+        
+        return val;
     }
     
     @Override

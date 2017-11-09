@@ -166,7 +166,7 @@ public class XmlServiceImpl implements XmlService {
             
             ModelImpl model = jaUtilities.getModel(jaxbAnnotatedInterface);
                 
-            return unmarshallClass(uri, null, model, localParser, null, advertiseInRegistry, advertiseInHub, null);
+            return unmarshallClass(uri, null, model, localParser, null, advertiseInRegistry, advertiseInHub, options);
         }
         catch (RuntimeException re) {
             throw re;

@@ -45,7 +45,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.pbuf.api.PBufUtilities;
@@ -117,6 +119,37 @@ public class PBufParserTest {
     }
     
     /**
+     * Tests very basic marshaling
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testMarshalFlatBeanNoSize() throws Exception {
+        ServiceLocator locator = Utilities.enableLocator();
+        
+        XmlService xmlService = locator.getService(XmlService.class, PBufUtilities.PBUF_SERVICE_NAME);
+        Assert.assertNotNull(xmlService);
+        
+        XmlRootHandle<RootOnlyBean> handle = xmlService.createEmptyHandle(RootOnlyBean.class);
+        handle.addRoot();
+        
+        RootOnlyBean rootOnlyBean = handle.getRoot();
+        
+        rootOnlyBean.setAddress(ALICE_ADDRESS);
+        rootOnlyBean.setName(ALICE);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+          handle.marshal(baos, getOptions(false));
+        }
+        finally {
+            baos.close();
+        }
+        
+        byte[] asBytes = baos.toByteArray();
+        Assert.assertTrue(asBytes.length > 0);
+    }
+    
+    /**
      * marshals a complex data structure
      * 
      * @throws Exception
@@ -148,6 +181,40 @@ public class PBufParserTest {
         bais.write(asBytes);
         bais.close();
         */
+    }
+    
+    /**
+     * marshals a complex data structure
+     * 
+     * @throws Exception
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testMarshalStructuredBeanNoSize() throws Exception {
+        ServiceLocator locator = Utilities.enableLocator();
+        
+        XmlService xmlService = locator.getService(XmlService.class, PBufUtilities.PBUF_SERVICE_NAME);
+        Assert.assertNotNull(xmlService);
+        
+        XmlRootHandle<ServiceRecordBlockBean> handle = getStandardTestBlock(xmlService);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+          handle.marshal(baos, getOptions(false));
+        }
+        finally {
+            baos.close();
+        }
+        
+        byte[] asBytes = baos.toByteArray();
+        Assert.assertTrue(asBytes.length > 0);
+        
+        
+        File f = new File("jrw.pbuf");
+        FileOutputStream bais = new FileOutputStream(f);
+        bais.write(asBytes);
+        bais.close();
+        
     }
     
     private final static int NUM_LOOPS = 10;
@@ -208,6 +275,28 @@ public class PBufParserTest {
         Assert.assertNotNull(xmlService);
         
         XmlRootHandle<ServiceRecordBlockBean> handle = xmlService.unmarshal(standardPbufURI, ServiceRecordBlockBean.class);
+        
+        validateStandardBean(handle, 0);
+    }
+    
+    /**
+     * Reads in a pre-generated binary protobuf
+     * 
+     * @throws Exception
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testUnmarshalStructuredBeanNoSize() throws Exception {
+        ClassLoader cl = getClass().getClassLoader();
+        URI standardPbufURI = cl.getResource("standardNoSize.pbuf").toURI();
+        
+        ServiceLocator locator = Utilities.enableLocator();
+        
+        XmlService xmlService = locator.getService(XmlService.class, PBufUtilities.PBUF_SERVICE_NAME);
+        Assert.assertNotNull(xmlService);
+        
+        XmlRootHandle<ServiceRecordBlockBean> handle = xmlService.unmarshal(
+                standardPbufURI, ServiceRecordBlockBean.class, true, true, getOptions(false));
         
         validateStandardBean(handle, 0);
     }
@@ -579,6 +668,17 @@ public class PBufParserTest {
         blockBean.addServiceRecord(costcoRecord);
         
         return handle;
+    }
+    
+    private static Map<String, Object> getOptions(boolean withSize) {
+        Map<String, Object> retVal = new HashMap<String, Object>();
+        
+        Boolean value = new Boolean(withSize);
+        
+        retVal.put(PBufUtilities.PBUF_OPTION_INT32_HEADER, value);
+        
+        return retVal;
+        
     }
 
 }
