@@ -39,6 +39,7 @@
  */
 package org.glassfish.hk2.pbuf.internal;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +48,8 @@ import org.glassfish.hk2.pbuf.api.annotations.OneOf;
 import org.glassfish.hk2.utilities.reflection.ClassReflectionHelper;
 import org.glassfish.hk2.utilities.reflection.MethodWrapper;
 import org.glassfish.hk2.utilities.reflection.internal.ClassReflectionHelperImpl;
+
+import com.google.protobuf.CodedInputStream;
 
 /**
  * @author jwells
@@ -217,5 +220,32 @@ public class PBUtilities {
         
         return sb.toString();
     }
-
+    
+    public static String printOutBytes(byte bytes[]) {
+        StringBuffer sb = new StringBuffer("Total buffer length: " + bytes.length + "\n");
+        
+        int numEntered = 0;
+        for (byte b : bytes) {
+            if ((numEntered % 16) == 0) {
+                if (numEntered != 0) {
+                    sb.append("\n");
+                }
+                
+                String desc = String.format("%08X " , numEntered);
+                sb.append(desc);
+            }
+            
+            String singleByte = String.format("%02X ", b);
+            sb.append(singleByte);
+            
+            numEntered++;
+            
+            if (((numEntered % 8) == 0) && ((numEntered % 16) != 0)) {
+                sb.append(" ");
+            }
+        }
+        
+        
+        return sb.toString();
+    }
 }

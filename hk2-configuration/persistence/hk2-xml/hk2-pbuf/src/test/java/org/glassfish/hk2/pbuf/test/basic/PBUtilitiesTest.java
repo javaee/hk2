@@ -37,70 +37,41 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.glassfish.hk2.pbuf.test.utilities;
+package org.glassfish.hk2.pbuf.test.basic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Random;
 
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.api.ServiceLocatorFactory;
-import org.glassfish.hk2.extension.ServiceLocatorGenerator;
-import org.glassfish.hk2.pbuf.api.PBufUtilities;
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
-import org.jvnet.hk2.external.generator.ServiceLocatorGeneratorImpl;
+import org.glassfish.hk2.pbuf.internal.PBUtilities;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author jwells
  *
  */
-public class Utilities {
-    private final static ServiceLocatorGenerator GENERATOR = new ServiceLocatorGeneratorImpl();
+public class PBUtilitiesTest {
+    private final static String RANDOM_RESULT =
+            "Total buffer length: 128\n" +
+            "00000000 88 18 B9 9F E8 54 2F 53  36 5A 99 D8 9E 24 14 EA \n" +
+            "00000010 22 E8 90 24 67 DB 7E 4B  5E 71 05 60 65 40 F5 A3 \n" +
+            "00000020 E5 32 CE FF 7D 58 77 2E  A5 21 80 72 17 7F 7B B4 \n" +
+            "00000030 8D B7 1B B6 9C 32 28 BB  5C 7C 04 3D D2 D1 41 A1 \n" +
+            "00000040 3F 44 6C 27 84 EF AE 06  82 01 2E F6 1C 24 FF F3 \n" +
+            "00000050 DE BB 0A 54 0C F1 42 8A  32 17 80 61 4A 70 36 0C \n" +
+            "00000060 9E 9C 14 5B 22 BA B9 FA  5C 04 69 80 26 36 A9 60 \n" +
+            "00000070 D6 DB FD C5 10 00 9C 66  B7 62 6D 31 CC 37 28 F2 ";
     
-    public static ServiceLocator enableLocator(Class<?>... classes) {
-        ServiceLocator retVal = ServiceLocatorFactory.getInstance().create(null, null, GENERATOR);
-        
-        ServiceLocatorUtilities.addClasses(retVal, classes);
-        
-        PBufUtilities.enablePBufService(retVal);
-        
-        // Twice tests idempotence
-        PBufUtilities.enablePBufService(retVal);
-        
-        return retVal;
-    }
+    private final Random random = new Random(1967L);
     
-    public static byte[] readStreamFully(InputStream stream) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            byte buffer[] = new byte[1000];
-            
-            int readLength;
-            while ((readLength = stream.read(buffer)) > 0) {
-                baos.write(buffer, 0, readLength);
-            }
-            
-            baos.flush();
-            
-            return baos.toByteArray();
-        }
-        finally {
-            baos.close();
-        }
+    @Test
+    public void testPrintOutBytes() {
+        byte buffer[] = new byte[128];
         
-    }
-    
-    public static int getNumPBufLengthBytes(byte bytes[]) {
-        int lcv = 0;
-        for (byte b : bytes) {
-            if ((b & 0x80) == 0) {
-                return lcv + 1;
-            }
-            
-            lcv++;
-        }
+        random.nextBytes(buffer);
         
-        return lcv+1;
+        String asString = PBUtilities.printOutBytes(buffer);
+        
+        Assert.assertEquals(RANDOM_RESULT, asString);
     }
 
 }

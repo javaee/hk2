@@ -43,12 +43,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.pbuf.api.PBufUtilities;
 import org.glassfish.hk2.pbuf.test.beans.AnotherRootBean;
@@ -64,6 +66,8 @@ import org.glassfish.hk2.xml.api.XmlRootHandle;
 import org.glassfish.hk2.xml.api.XmlService;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
  * @author jwells
@@ -209,11 +213,12 @@ public class PBufParserTest {
         byte[] asBytes = baos.toByteArray();
         Assert.assertTrue(asBytes.length > 0);
         
-        
+        /*
         File f = new File("jrw.pbuf");
         FileOutputStream bais = new FileOutputStream(f);
         bais.write(asBytes);
         bais.close();
+        */
         
     }
     
@@ -540,6 +545,116 @@ public class PBufParserTest {
         Assert.assertEquals("u_rl", org.glassfish.hk2.pbuf.internal.PBUtilities.camelCaseToUnderscore("uRL"));
         Assert.assertEquals("u_rl", org.glassfish.hk2.pbuf.internal.PBUtilities.camelCaseToUnderscore("URl"));
         Assert.assertEquals("u_rl", org.glassfish.hk2.pbuf.internal.PBUtilities.camelCaseToUnderscore("uRl"));
+    }
+    
+    /**
+     * Reads in a pre-generated binary protobuf
+     * 
+     * @throws Exception
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testFailureUnmarshalStructuredBean() throws Exception {
+        ClassLoader cl = getClass().getClassLoader();
+        URL standardPbufURL = cl.getResource("standard.pbuf");
+        ServiceLocator locator = Utilities.enableLocator();
+        XmlService xmlService = locator.getService(XmlService.class, PBufUtilities.PBUF_SERVICE_NAME);
+        Assert.assertNotNull(xmlService);
+        
+        byte asBytes[];
+        InputStream is = standardPbufURL.openStream();
+        try {
+            asBytes = Utilities.readStreamFully(is);
+        }
+        finally {
+            is.close();
+        }
+        
+        for (int numLengthBytes = Utilities.getNumPBufLengthBytes(asBytes); numLengthBytes < asBytes.length; numLengthBytes++) {
+            // Put absolute garbage in
+            asBytes[numLengthBytes] = 0;
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(asBytes);
+        try {
+            try {
+                xmlService.unmarshal(bais, ServiceRecordBlockBean.class);
+                Assert.fail("Should have failed");
+            }
+            catch (MultiException me) {
+                checkMultiExceptionWithBadData(me);
+            }
+        }
+        finally {
+            bais.close();
+        }
+    }
+    
+    
+    
+    /**
+     * Reads in a pre-generated binary protobuf
+     * 
+     * @throws Exception
+     */
+    @Test
+    // @org.junit.Ignore
+    public void testFailureUnmarshalStructuredBeanNoSize() throws Exception {
+        ClassLoader cl = getClass().getClassLoader();
+        URL standardPbufURL = cl.getResource("standardNoSize.pbuf");
+        ServiceLocator locator = Utilities.enableLocator();
+        XmlService xmlService = locator.getService(XmlService.class, PBufUtilities.PBUF_SERVICE_NAME);
+        Assert.assertNotNull(xmlService);
+        
+        byte asBytes[];
+        InputStream is = standardPbufURL.openStream();
+        try {
+            asBytes = Utilities.readStreamFully(is);
+        }
+        finally {
+            is.close();
+        }
+        
+        for (int numLengthBytes = 0; numLengthBytes < asBytes.length; numLengthBytes++) {
+            // Put absolute garbage in
+            asBytes[numLengthBytes] = 0;
+        }
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(asBytes);
+        try {
+            try {
+                xmlService.unmarshal(bais, ServiceRecordBlockBean.class, false, false, getOptions(false));
+                Assert.fail("Should have failed with bad data");
+            }
+            catch (MultiException me) {
+                checkMultiExceptionWithBadData(me);
+            }
+        }
+        finally {
+            bais.close();
+        }
+    }
+    
+    /**
+     * Specialized multi-exception validator
+     * 
+     * @param me The multi-exception to validate
+     */
+    private static void checkMultiExceptionWithBadData(MultiException me) {
+        int lcv = 0;
+        for (Throwable th : me.getErrors()) {
+            if (lcv == 0) {
+                Assert.assertTrue(th instanceof InvalidProtocolBufferException);
+            }
+            else if (lcv == 1) {
+                Assert.assertTrue(th instanceof IllegalStateException);
+                String message = th.getMessage();
+                
+                Assert.assertTrue(message, message.contains("00000000 "));
+            }
+            
+            lcv++;
+        }
     }
     
     private static void validateStandardBean(XmlRootHandle<ServiceRecordBlockBean> handle, long sequenceNumber) {

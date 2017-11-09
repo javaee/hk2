@@ -139,9 +139,15 @@ public class PBufParser implements XmlServiceParser {
             throw new IOException(e);
         }
         
+        boolean markSupported = input.markSupported();
+        if (markSupported) {
+            input.mark(Integer.MAX_VALUE);
+        }
+        
         boolean useLength = getPrependSize(options);
         
         byte[] rawBytes;
+        int size = -1;
         if (useLength) {
             CodedInputStream cis;
             synchronized (cisCache) {
@@ -152,7 +158,6 @@ public class PBufParser implements XmlServiceParser {
                 }
             }
             
-            int size;
             try {
                 size = cis.readInt32();
             }
@@ -186,7 +191,35 @@ public class PBufParser implements XmlServiceParser {
             rawBytes = baos.toByteArray();
         }
             
-        DynamicMessage message = internalUnmarshal((ModelImpl) rootModel, rawBytes);
+        DynamicMessage message;
+        try {
+            message = internalUnmarshal((ModelImpl) rootModel, rawBytes);
+        }
+        catch (InvalidProtocolBufferException ipbe) {
+            MultiException me = new MultiException(ipbe);
+            if (markSupported) {
+                byte debugBytes[];
+                if (useLength) {
+                    input.reset();
+                    
+                    byte[] lengthBytes = getLengthBytes(input);
+                    
+                    debugBytes = new byte[lengthBytes.length + rawBytes.length];
+                    System.arraycopy(lengthBytes, 0, debugBytes, 0, lengthBytes.length);
+                    System.arraycopy(rawBytes, 0, debugBytes, lengthBytes.length, rawBytes.length);
+                }
+                else {
+                    debugBytes = rawBytes;
+                }
+                
+                String inputAsString = PBUtilities.printOutBytes(debugBytes);
+                
+                IllegalStateException ise = new IllegalStateException("Invalid protocol buffer:\n" + inputAsString);
+                me.addError(ise);
+            }
+            
+            throw me;
+        }
         
         XmlHk2ConfigurationBean retVal = parseDynamicMessage((ModelImpl) rootModel,
             null,
@@ -194,6 +227,23 @@ public class PBufParser implements XmlServiceParser {
             listener);
         
         return (T) retVal;
+    }
+    
+    private static byte[] getLengthBytes(InputStream input) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            int b = input.read();
+            baos.write(b);
+            
+            if ((b & 0x80) == 0) {
+                return baos.toByteArray();
+            }
+        }
+        finally {
+            baos.close();
+        }
+        
+        throw new IOException("Reached end of stream without an end to the length!");
     }
 
     /* (non-Javadoc)
