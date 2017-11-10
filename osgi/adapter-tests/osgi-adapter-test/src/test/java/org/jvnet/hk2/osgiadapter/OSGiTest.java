@@ -127,7 +127,7 @@ public class OSGiTest {
                 provision(mavenBundle().groupId("org.javassist").artifactId(
                         "javassist").version("3.22.0-CR2").startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.EXT_GROUP_ID).artifactId(
-                        "asm-all-repackaged").version(projectVersion).startLevel(4)),
+                        "asm-repackaged").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.EXT_GROUP_ID).artifactId(
                         "aopalliance-repackaged").version(projectVersion).startLevel(4)),
                 provision(mavenBundle().groupId(ServiceLocatorHk2MainTest.GROUP_ID)
