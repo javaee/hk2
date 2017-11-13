@@ -55,6 +55,7 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.pbuf.api.PBufUtilities;
 import org.glassfish.hk2.pbuf.test.beans.AnotherRootBean;
 import org.glassfish.hk2.pbuf.test.beans.CustomerBean;
+import org.glassfish.hk2.pbuf.test.beans.NFCEast;
 import org.glassfish.hk2.pbuf.test.beans.OneOfRootBean;
 import org.glassfish.hk2.pbuf.test.beans.RootOnlyBean;
 import org.glassfish.hk2.pbuf.test.beans.ServiceRecordBean;
@@ -214,12 +215,11 @@ public class PBufParserTest {
         Assert.assertTrue(asBytes.length > 0);
         
         /*
-        File f = new File("jrw.pbuf");
+        File f = new File("jrwNS.pbuf");
         FileOutputStream bais = new FileOutputStream(f);
         bais.write(asBytes);
         bais.close();
         */
-        
     }
     
     private final static int NUM_LOOPS = 10;
@@ -668,9 +668,9 @@ public class PBufParserTest {
         List<ServiceRecordBean> records = root.getServiceRecords();
         Assert.assertEquals(3, records.size());
         
-        validateServiceRecordBean(records.get(0), ACME, ACME_ID, ACME_HASH);
-        validateServiceRecordBean(records.get(1), BJS, BJS_ID, BJS_HASH);
-        validateServiceRecordBean(records.get(2), COSTCO, COSTCO_ID, COSTCO_HASH);
+        validateServiceRecordBean(records.get(0), ACME, ACME_ID, ACME_HASH, NFCEast.EAGLES);
+        validateServiceRecordBean(records.get(1), BJS, BJS_ID, BJS_HASH, NFCEast.GIANTS);
+        validateServiceRecordBean(records.get(2), COSTCO, COSTCO_ID, COSTCO_HASH, NFCEast.REDSKINS);
     }
     
     private static void validateFooBean(XmlRootHandle<org.glassfish.hk2.pbuf.test.beans.FooBean> handle) {
@@ -692,7 +692,7 @@ public class PBufParserTest {
         Assert.assertEquals(COSTCO_ID, foo3s.get(2).getID());
     }
     
-    private static void validateServiceRecordBean(ServiceRecordBean record, String name, long id, String hash) {
+    private static void validateServiceRecordBean(ServiceRecordBean record, String name, long id, String hash, NFCEast team) {
         Assert.assertNotNull(record);
         
         Assert.assertEquals(hash, record.getServiceRecordID());
@@ -702,13 +702,15 @@ public class PBufParserTest {
         
         Assert.assertEquals(name, customer.getCustomerName());
         Assert.assertEquals(id, customer.getCustomerID());
+        Assert.assertEquals(team, customer.getTeam());
     }
     
-    private static CustomerBean createCustomerBean(XmlService xmlService, String companyName, long id) {
+    private static CustomerBean createCustomerBean(XmlService xmlService, String companyName, long id, NFCEast team) {
         CustomerBean retVal = xmlService.createBean(CustomerBean.class);
         
         retVal.setCustomerName(companyName);
         retVal.setCustomerID(id);
+        retVal.setTeam(team);
         
         return retVal;
     }
@@ -770,9 +772,9 @@ public class PBufParserTest {
         
         blockBean.setSequenceNumber(0L);
         
-        CustomerBean acmeBean = createCustomerBean(xmlService, ACME, ACME_ID);
-        CustomerBean bjsBean = createCustomerBean(xmlService, BJS, BJS_ID);
-        CustomerBean costcoBean = createCustomerBean(xmlService, COSTCO, COSTCO_ID);
+        CustomerBean acmeBean = createCustomerBean(xmlService, ACME, ACME_ID, NFCEast.EAGLES);
+        CustomerBean bjsBean = createCustomerBean(xmlService, BJS, BJS_ID, NFCEast.GIANTS);
+        CustomerBean costcoBean = createCustomerBean(xmlService, COSTCO, COSTCO_ID, NFCEast.REDSKINS);
         
         ServiceRecordBean acmeRecord = createServiceRecordBean(xmlService, acmeBean, ACME_HASH);
         ServiceRecordBean bjsRecord = createServiceRecordBean(xmlService, bjsBean, BJS_HASH);

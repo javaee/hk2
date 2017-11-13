@@ -39,34 +39,13 @@
  */
 package org.glassfish.hk2.pbuf.test.beans;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
-
-import org.glassfish.hk2.xml.api.annotations.Hk2XmlPreGenerate;
-import org.jvnet.hk2.annotations.Contract;
-
 /**
  * @author jwells
  *
  */
-@Contract
-@Hk2XmlPreGenerate
-@XmlType(propOrder={ "customerID"
-        , "customerName"
-        , "team"})
-public interface CustomerBean {
-    @XmlElement(name="name", required=true)
-    @XmlID
-    public String getCustomerName();
-    public void setCustomerName(String customerName);
-    
-    @XmlElement(name="id")
-    public long getCustomerID();
-    public void setCustomerID(long id);
-    
-    @XmlElement(name="team")
-    public NFCEast getTeam();
-    public void setTeam(NFCEast team);
-
+public enum NFCEast {
+    EAGLES
+    , GIANTS
+    , REDSKINS
+    , COWBOYS
 }

@@ -54,7 +54,8 @@ import org.jvnet.hk2.annotations.Contract;
 @XmlType(propOrder={ "name"
         , "address"
         , "notSet"
-        , "notSetLong" })
+        , "notSetLong"
+        , "enumeration"})
 public interface RootOnlyBean {
     @XmlElement(name="name", defaultValue="bob")
     public String getName();
@@ -71,5 +72,9 @@ public interface RootOnlyBean {
     @XmlElement(name="notSetLong")
     public long getNotSetLong();
     public void setNotSetLong(long notSet);
+    
+    @XmlElement(name="enumeration")
+    public NFCEast getEnumeration();
+    public void setEnumeration(NFCEast east);
 
 }

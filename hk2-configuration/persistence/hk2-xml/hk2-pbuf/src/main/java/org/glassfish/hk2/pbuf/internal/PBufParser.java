@@ -86,7 +86,10 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.Descriptors.EnumValueDescriptor;
 import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.Enum;
+import com.google.protobuf.EnumValue;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
@@ -99,6 +102,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 @Visibility(DescriptorVisibility.LOCAL)
 public class PBufParser implements XmlServiceParser {
     private final HashMap<Class<?>, Descriptors.Descriptor> allProtos = new HashMap<Class<?>, Descriptors.Descriptor>();
+    private final HashMap<Class<?>, Descriptors.EnumDescriptor> allEnums = new HashMap<Class<?>, Descriptors.EnumDescriptor>();
     
     private final WeakHashMap<OutputStream, CodedOutputStream> cosCache = new WeakHashMap<OutputStream, CodedOutputStream>();
     private final WeakHashMap<InputStream, CodedInputStream> cisCache = new WeakHashMap<InputStream, CodedInputStream>();
@@ -603,6 +607,9 @@ public class PBufParser implements XmlServiceParser {
         if (childClass.equals(short.class) || childClass.equals(Short.class)) {
             return DescriptorProtos.FieldDescriptorProto.Type.TYPE_INT32;
         }
+        if (childClass.isEnum()) {
+            return DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM;
+        }
         
         throw new AssertionError("Unknown type to convert " + childClass.getName());
     }
@@ -695,7 +702,7 @@ public class PBufParser implements XmlServiceParser {
         }
     }
     
-    private static Descriptors.Descriptor convertModelToDescriptor(ModelImpl model, Set<Descriptors.FileDescriptor> knownFiles) throws Exception {
+    private Descriptors.Descriptor convertModelToDescriptor(ModelImpl model, Set<Descriptors.FileDescriptor> knownFiles) throws Exception {
         Map<QName, ChildDescriptor> allChildren = model.getAllChildrenDescriptors();
         
         String protoName = getProtoNameFromModel(model);
@@ -761,6 +768,12 @@ public class PBufParser implements XmlServiceParser {
                 }
             
                 DescriptorProtos.FieldDescriptorProto.Type fieldType = convertChildDataModelToType(dataModel);
+                if (DescriptorProtos.FieldDescriptorProto.Type.TYPE_ENUM.equals(fieldType)) {
+                    String fieldTypeName = convertEnumToDescriptor(dataModel, knownFiles);
+                    
+                    fBuilder.setTypeName(fieldTypeName);
+                }
+                
                 fBuilder.setType(fieldType);
             }
             else {
@@ -832,13 +845,80 @@ public class PBufParser implements XmlServiceParser {
         return fD;
     }
     
-    private static Object convertFieldForMarshal(Object field, Class<?> expectedType) {
+    private String convertEnumToDescriptor(ChildDataModel childDataModel,
+            Set<Descriptors.FileDescriptor> knownFiles) throws Exception {
+        synchronized (allEnums) {
+            Class<?> expectedType = childDataModel.getChildTypeAsClass();
+            if (allEnums.containsKey(expectedType)) {
+                System.out.println("JRW(00) did short-circuit");
+                return "." + expectedType.getName();
+            }
+        
+            String enumTypeName = expectedType.getSimpleName();
+            String enumPackageName = expectedType.getPackage().getName();
+        
+            DescriptorProtos.EnumDescriptorProto.Builder builder = DescriptorProtos.EnumDescriptorProto.newBuilder();
+            builder.setName(enumTypeName);
+        
+            int number = 1;
+            for (Object e : expectedType.getEnumConstants()) {
+                DescriptorProtos.EnumValueDescriptorProto.Builder enumBuilder = DescriptorProtos.EnumValueDescriptorProto.newBuilder();
+            
+                enumBuilder.setName(e.toString());
+                enumBuilder.setNumber(number);
+                number++;
+            
+                builder.addValue(enumBuilder.build());
+            }
+        
+            DescriptorProtos.EnumDescriptorProto eProto = builder.build();
+        
+            DescriptorProtos.FileDescriptorProto.Builder fileBuilder = DescriptorProtos.FileDescriptorProto.newBuilder();
+            fileBuilder.addEnumType(eProto);
+            if (enumPackageName != null) {
+              fileBuilder.setPackage(enumPackageName);
+            }
+        
+            DescriptorProtos.FileDescriptorProto fProto = fileBuilder.build();
+        
+            Descriptors.FileDescriptor fDesc = Descriptors.FileDescriptor.buildFrom(fProto,
+                knownFiles.toArray(new Descriptors.FileDescriptor[knownFiles.size()]));
+        
+            knownFiles.add(fDesc);
+        
+            Descriptors.EnumDescriptor fD = fDesc.findEnumTypeByName(enumTypeName);
+        
+            allEnums.put(expectedType, fD);
+        
+            return "." + expectedType.getName();
+        }
+    }
+    
+    private Object convertFieldForMarshal(Object field, Class<?> expectedType) {
         if (field == null) {
             if (String.class.equals(expectedType)) {
                 return new String("");
             }
             
             return null;
+        }
+        
+        if (expectedType.isEnum()) {
+            Descriptors.EnumDescriptor enumDescriptor;
+            synchronized (allEnums) {
+                enumDescriptor = allEnums.get(expectedType);
+            }
+            
+            if (enumDescriptor == null) {
+                throw new IllegalStateException("Unknown enum type " + expectedType.getName());
+            }
+            
+            EnumValueDescriptor retVal = enumDescriptor.findValueByName(field.toString());
+            if (retVal == null) {
+                throw new IllegalStateException("Unknown enum value " + field + " in enumeration " + expectedType.getName());
+            }
+            
+            return retVal;
         }
         
         if (field instanceof Short) {
@@ -859,10 +939,39 @@ public class PBufParser implements XmlServiceParser {
         return field;
     }
     
-    private static Object convertFieldForUnmarshal(Object field, ChildDataModel expected) {
+    private Object convertFieldForUnmarshal(Object field, ChildDataModel expected) {
         if (field == null) return null;
         
-        Class<?> expectedType = expected.getChildTypeAsClass();
+        Class<?> expectedType = (Class<Object>) expected.getChildTypeAsClass();
+        
+        if (expectedType.isEnum()) {
+            Descriptors.EnumDescriptor enumDescriptor;
+            synchronized (allEnums) {
+                enumDescriptor = allEnums.get(expectedType);
+            }
+            
+            if (enumDescriptor == null) {
+                throw new IllegalStateException("Could not find enumeration type " + expectedType.getName());
+            }
+            
+            EnumValueDescriptor evd = (EnumValueDescriptor) field;
+            String enumValueName = evd.getName();
+            
+            Object found = null;
+            for (Object c : expectedType.getEnumConstants()) {
+                if (c.toString().equals(enumValueName)) {
+                    found = c;
+                    break;
+                }
+            }
+            
+            if (found == null) {
+                throw new IllegalStateException("Could not find enumeration value " + enumValueName + " in enum " +
+                    expectedType.getName());
+            }
+            
+            return found;
+        }
         
         if (expectedType.equals(short.class) || expectedType.equals(Short.class)) {
             Integer i = (Integer) field;
