@@ -873,7 +873,7 @@ public class PBufParser implements XmlServiceParser {
             DescriptorProtos.EnumDescriptorProto.Builder builder = DescriptorProtos.EnumDescriptorProto.newBuilder();
             builder.setName(enumSimpleTypeName);
         
-            int number = 1;
+            int number = 0;
             for (Object e : expectedType.getEnumConstants()) {
                 DescriptorProtos.EnumValueDescriptorProto.Builder enumBuilder = DescriptorProtos.EnumValueDescriptorProto.newBuilder();
             
