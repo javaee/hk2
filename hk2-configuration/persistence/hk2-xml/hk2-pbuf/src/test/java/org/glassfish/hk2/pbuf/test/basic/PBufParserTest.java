@@ -59,6 +59,7 @@ import org.glassfish.hk2.pbuf.test.beans.NFCEast;
 import org.glassfish.hk2.pbuf.test.beans.OneOfRootBean;
 import org.glassfish.hk2.pbuf.test.beans.RootOnlyBean;
 import org.glassfish.hk2.pbuf.test.beans.ServiceRecordBean;
+import org.glassfish.hk2.pbuf.test.beans.ServiceRecordBean.NFCWest;
 import org.glassfish.hk2.pbuf.test.beans.ServiceRecordBlockBean;
 import org.glassfish.hk2.pbuf.test.beans.TypeBean;
 import org.glassfish.hk2.pbuf.test.utilities.Utilities;
@@ -110,6 +111,7 @@ public class PBufParserTest {
         
         rootOnlyBean.setAddress(ALICE_ADDRESS);
         rootOnlyBean.setName(ALICE);
+        rootOnlyBean.setEnumeration(NFCEast.EAGLES);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -141,6 +143,7 @@ public class PBufParserTest {
         
         rootOnlyBean.setAddress(ALICE_ADDRESS);
         rootOnlyBean.setName(ALICE);
+        rootOnlyBean.setEnumeration(NFCEast.EAGLES);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -668,9 +671,9 @@ public class PBufParserTest {
         List<ServiceRecordBean> records = root.getServiceRecords();
         Assert.assertEquals(3, records.size());
         
-        validateServiceRecordBean(records.get(0), ACME, ACME_ID, ACME_HASH, NFCEast.EAGLES);
-        validateServiceRecordBean(records.get(1), BJS, BJS_ID, BJS_HASH, NFCEast.GIANTS);
-        validateServiceRecordBean(records.get(2), COSTCO, COSTCO_ID, COSTCO_HASH, NFCEast.REDSKINS);
+        validateServiceRecordBean(records.get(0), ACME, ACME_ID, ACME_HASH, NFCEast.EAGLES, NFCWest.SEAHAWKS);
+        validateServiceRecordBean(records.get(1), BJS, BJS_ID, BJS_HASH, NFCEast.GIANTS, NFCWest.CARDINALS);
+        validateServiceRecordBean(records.get(2), COSTCO, COSTCO_ID, COSTCO_HASH, NFCEast.REDSKINS, NFCWest.RAMS);
     }
     
     private static void validateFooBean(XmlRootHandle<org.glassfish.hk2.pbuf.test.beans.FooBean> handle) {
@@ -692,10 +695,12 @@ public class PBufParserTest {
         Assert.assertEquals(COSTCO_ID, foo3s.get(2).getID());
     }
     
-    private static void validateServiceRecordBean(ServiceRecordBean record, String name, long id, String hash, NFCEast team) {
+    private static void validateServiceRecordBean(ServiceRecordBean record, String name, long id, String hash,
+            NFCEast team, NFCWest westTeam) {
         Assert.assertNotNull(record);
         
         Assert.assertEquals(hash, record.getServiceRecordID());
+        Assert.assertEquals(westTeam, record.getTeam());
         
         CustomerBean customer = record.getCustomer();
         Assert.assertNotNull(customer);
@@ -715,11 +720,12 @@ public class PBufParserTest {
         return retVal;
     }
     
-    private static ServiceRecordBean createServiceRecordBean(XmlService xmlService, CustomerBean customer, String hash) {
+    private static ServiceRecordBean createServiceRecordBean(XmlService xmlService, CustomerBean customer, String hash, NFCWest team) {
         ServiceRecordBean retVal = xmlService.createBean(ServiceRecordBean.class);
         
         retVal.setServiceRecordID(hash);
         retVal.setCustomer(customer);
+        retVal.setTeam(team);
         
         return retVal;
     }
@@ -776,9 +782,9 @@ public class PBufParserTest {
         CustomerBean bjsBean = createCustomerBean(xmlService, BJS, BJS_ID, NFCEast.GIANTS);
         CustomerBean costcoBean = createCustomerBean(xmlService, COSTCO, COSTCO_ID, NFCEast.REDSKINS);
         
-        ServiceRecordBean acmeRecord = createServiceRecordBean(xmlService, acmeBean, ACME_HASH);
-        ServiceRecordBean bjsRecord = createServiceRecordBean(xmlService, bjsBean, BJS_HASH);
-        ServiceRecordBean costcoRecord = createServiceRecordBean(xmlService, costcoBean, COSTCO_HASH);
+        ServiceRecordBean acmeRecord = createServiceRecordBean(xmlService, acmeBean, ACME_HASH, NFCWest.SEAHAWKS);
+        ServiceRecordBean bjsRecord = createServiceRecordBean(xmlService, bjsBean, BJS_HASH, NFCWest.CARDINALS);
+        ServiceRecordBean costcoRecord = createServiceRecordBean(xmlService, costcoBean, COSTCO_HASH, NFCWest.RAMS);
         
         blockBean.addServiceRecord(acmeRecord);
         blockBean.addServiceRecord(bjsRecord);

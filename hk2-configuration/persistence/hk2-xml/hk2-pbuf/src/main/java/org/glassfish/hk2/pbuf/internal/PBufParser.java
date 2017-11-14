@@ -845,20 +845,33 @@ public class PBufParser implements XmlServiceParser {
         return fD;
     }
     
+    private static String getExtendedSimpleName(Class<?> expectedType) {
+        String name = expectedType.getName();
+        
+        int index = name.lastIndexOf('.');
+        if (index < 0) {
+            return name;
+        }
+        
+        String retVal = name.substring(index + 1);
+        retVal = retVal.replace('$', '_');
+        return retVal;
+    }
+    
     private String convertEnumToDescriptor(ChildDataModel childDataModel,
             Set<Descriptors.FileDescriptor> knownFiles) throws Exception {
         synchronized (allEnums) {
             Class<?> expectedType = childDataModel.getChildTypeAsClass();
             if (allEnums.containsKey(expectedType)) {
-                System.out.println("JRW(00) did short-circuit");
                 return "." + expectedType.getName();
             }
         
-            String enumTypeName = expectedType.getSimpleName();
+            String enumSimpleTypeName = getExtendedSimpleName(expectedType);
             String enumPackageName = expectedType.getPackage().getName();
+            String enumTypeName = enumPackageName + "." + enumSimpleTypeName;
         
             DescriptorProtos.EnumDescriptorProto.Builder builder = DescriptorProtos.EnumDescriptorProto.newBuilder();
-            builder.setName(enumTypeName);
+            builder.setName(enumSimpleTypeName);
         
             int number = 1;
             for (Object e : expectedType.getEnumConstants()) {
@@ -886,11 +899,11 @@ public class PBufParser implements XmlServiceParser {
         
             knownFiles.add(fDesc);
         
-            Descriptors.EnumDescriptor fD = fDesc.findEnumTypeByName(enumTypeName);
+            Descriptors.EnumDescriptor fD = fDesc.findEnumTypeByName(enumSimpleTypeName);
         
             allEnums.put(expectedType, fD);
         
-            return "." + expectedType.getName();
+            return "." + enumTypeName;
         }
     }
     

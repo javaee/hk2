@@ -57,6 +57,7 @@ import org.jvnet.hk2.annotations.Contract;
 @XmlType(propOrder={
         "customer"
         , "serviceRecordID"
+        , "team"
         })
 public interface ServiceRecordBean {
     @XmlElement(name="serviceID", required=true)
@@ -67,4 +68,15 @@ public interface ServiceRecordBean {
     @XmlElement(name="customer")
     CustomerBean getCustomer();
     void setCustomer(CustomerBean customer);
+    
+    @XmlElement(name="team")
+    public NFCWest getTeam();
+    public void setTeam(NFCWest team);
+    
+    public enum NFCWest {
+        SEAHAWKS
+        , RAMS
+        , CARDINALS
+        , NINERS
+    }
 }
