@@ -39,6 +39,8 @@
  */
 package org.glassfish.hk2.json.api;
 
+import org.glassfish.hk2.api.DuplicateServiceException;
+import org.glassfish.hk2.api.MultiException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.json.internal.JsonParser;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -51,6 +53,18 @@ public class JsonUtilities {
      */
     public static final String JSON_SERVICE_NAME = "JsonService";
     
+    private static boolean isDup(MultiException me) {
+        if (me == null) return false;
+        
+        for (Throwable th : me.getErrors()) {
+            if (th instanceof DuplicateServiceException) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     /**
      * This method will make available a {@link XmlService} named
      * {@link #JSON_SERVICE_NAME} to be used to parse JSON
@@ -62,7 +76,12 @@ public class JsonUtilities {
      * a Json version of the {@link XmlService}
      */
     public static void enableJsonService(ServiceLocator locator) {
-        ServiceLocatorUtilities.addClasses(locator, true, JsonParser.class);
+        try {
+            ServiceLocatorUtilities.addClasses(locator, true, JsonParser.class);
+        }
+        catch (MultiException me) {
+            if (!isDup(me)) throw me;
+        }
         
         XmlServiceUtilities.enableXmlService(locator);
     }
