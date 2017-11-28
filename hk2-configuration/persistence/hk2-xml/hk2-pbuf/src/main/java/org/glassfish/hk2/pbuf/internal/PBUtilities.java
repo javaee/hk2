@@ -220,32 +220,4 @@ public class PBUtilities {
         
         return sb.toString();
     }
-    
-    public static String printOutBytes(byte bytes[]) {
-        StringBuffer sb = new StringBuffer("Total buffer length: " + bytes.length + "\n");
-        
-        int numEntered = 0;
-        for (byte b : bytes) {
-            if ((numEntered % 16) == 0) {
-                if (numEntered != 0) {
-                    sb.append("\n");
-                }
-                
-                String desc = String.format("%08X " , numEntered);
-                sb.append(desc);
-            }
-            
-            String singleByte = String.format("%02X ", b);
-            sb.append(singleByte);
-            
-            numEntered++;
-            
-            if (((numEntered % 8) == 0) && ((numEntered % 16) != 0)) {
-                sb.append(" ");
-            }
-        }
-        
-        
-        return sb.toString();
-    }
 }

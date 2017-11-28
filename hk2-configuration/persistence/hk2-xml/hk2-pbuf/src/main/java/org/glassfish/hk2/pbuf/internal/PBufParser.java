@@ -216,7 +216,7 @@ public class PBufParser implements XmlServiceParser {
                     debugBytes = rawBytes;
                 }
                 
-                String inputAsString = PBUtilities.printOutBytes(debugBytes);
+                String inputAsString = GeneralUtilities.prettyPrintBytes(debugBytes);
                 
                 IllegalStateException ise = new IllegalStateException("Invalid protocol buffer:\n" + inputAsString);
                 me.addError(ise);

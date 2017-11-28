@@ -37,11 +37,11 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.glassfish.hk2.pbuf.test.basic;
+package org.glassfish.hk2.utilities.general.test;
 
 import java.util.Random;
 
-import org.glassfish.hk2.pbuf.internal.PBUtilities;
+import org.glassfish.hk2.utilities.general.GeneralUtilities;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ import org.junit.Test;
  * @author jwells
  *
  */
-public class PBUtilitiesTest {
+public class GeneralUtilitiesTest {
     private final static String RANDOM_RESULT =
             "Total buffer length: 128\n" +
             "00000000 88 18 B9 9F E8 54 2F 53  36 5A 99 D8 9E 24 14 EA \n" +
@@ -69,7 +69,7 @@ public class PBUtilitiesTest {
         
         random.nextBytes(buffer);
         
-        String asString = PBUtilities.printOutBytes(buffer);
+        String asString = GeneralUtilities.prettyPrintBytes(buffer);
         
         Assert.assertEquals(RANDOM_RESULT, asString);
     }
