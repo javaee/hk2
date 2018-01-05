@@ -193,7 +193,7 @@
     </dependencyManagement>
 
     <scm>
-        <tag>2.5.0-b42-SNAPSHOT</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
