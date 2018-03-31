@@ -392,7 +392,7 @@ public class HK2Main extends Main implements
 
                 @Override
                 public boolean matches(Descriptor d) {
-                    return d.equals(service); // addingServices() returns the descriptor
+                    return service.equals(d); // addingServices() returns the descriptor
                 }
 
             };
