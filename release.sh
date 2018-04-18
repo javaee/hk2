@@ -39,49 +39,9 @@
 # holder.
 #
 
-#------------------------------------------------------   
-#-- BE SURE TO HAVE THE FOLLOWING IN YOUR SETTINGS.XML
-#------------------------------------------------------
-#
-#    <servers>
-#        <server>
-#            <id>jvnet-nexus-staging</id>
-#            <username>jvnet_id</username>
-#            <password>password</password>
-#        </server>
-#        <server>
-#            <id>website.java.net</id>
-#            <username>jvnet</username>
-#            <password>password</password>
-#        </server>
-#    </servers>
-#    <profiles>
-#      <profile>
-#        <id>release</id>
-#        <properties>
-#          <user.name>jvnet_id</user.name>
-#          <release.arguments>-Dhttps.proxyHost=www-proxy.us.oracle.com -Dhttps.proxyPort=80 -Dgpg.passphrase=glassfish</release.arguments>
-#        </properties>
-#        <activation>
-#          <activeByDefault>false</activeByDefault>
-#        </activation>
-#      </profile>
-#    </profiles>
-
-# see the following URL for gpg issues
-# https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven#HowToGeneratePGPSignaturesWithMaven-GenerateaKeyPair
-
-# login to nexus at maven.java.net, using your jvnet crendentials, and release (Close) the artifact
-# https://maven.java.net/index.html#stagingRepositories
-
-# More information:
-# https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt
-# http://aseng-wiki.us.oracle.com/asengwiki/display/GlassFish/Migrating+Maven+deployment+to+maven.java.net
-
 # Note: the release process may use ssh key to interact with the SCM. If so, it will use your user.name as define in the release profile of your settings.xml.
 # Be sure to have your ssh public key exported in your java.net account.
 
-# on solaris, lets assume gsed is in the PATH
 if [ `uname | grep -i sunos | wc -l` -eq 1 ]
 then
     SED="gsed"
