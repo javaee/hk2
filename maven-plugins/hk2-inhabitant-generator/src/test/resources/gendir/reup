@@ -1,4 +1,0 @@
-#!/bin/ksh
-
-rm ../gendir.jar
-jar cvf ../gendir.jar *
