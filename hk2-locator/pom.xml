@@ -87,11 +87,11 @@
         </plugins>
     </build>
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.jvnet</groupId>
             <artifactId>tiger-types</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.glassfish.hk2.external</groupId>
             <artifactId>javax.inject</artifactId>

@@ -169,7 +169,7 @@
         <javassist.version>3.22.0-CR2</javassist.version>
         <junit.version>4.12</junit.version>
         <asm.version>6.0</asm.version>
-        <tiger-types.version>1.4</tiger-types.version>
+        <!--<tiger-types.version>1.4</tiger-types.version>-->
         <woodstox.version>4.1.2</woodstox.version>
         <stax-api.version>1.0-2</stax-api.version>
         <aopalliance.version>1.0</aopalliance.version>
@@ -535,12 +535,12 @@
                 <artifactId>maven-plugin-api</artifactId>
                 <version>3.3.3</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-project</artifactId>
                 <version>3.0-alpha-2</version>
                 <type>jar</type>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>com.sun.codemodel</groupId>
                 <artifactId>codemodel</artifactId>
@@ -612,11 +612,11 @@
                 <artifactId>org.osgi.core</artifactId>
                 <version>4.2.0</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.core</artifactId>
                 <version>1.4.0</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.compendium</artifactId>
@@ -637,11 +637,11 @@
                 <artifactId>org.apache.felix.bundlerepository</artifactId>
                 <version>2.0.10</version>
             </dependency>
-            <dependency>
+           <!-- <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam</artifactId>
                 <version>${pax-exam-version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam-spi</artifactId>
@@ -683,11 +683,6 @@
                 <version>${pax-exam-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base</artifactId>
-                <version>1.5.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.ops4j.pax.url</groupId>
                 <artifactId>pax-url-aether</artifactId>
                 <version>2.5.4</version>
@@ -707,11 +702,11 @@
                 <artifactId>geronimo-atinject_1.0_spec</artifactId>
                 <version>1.0</version>
             </dependency>
-            <dependency>
+           <!-- <dependency>
                 <groupId>org.ops4j.pax.tipi</groupId>
                 <artifactId>org.ops4j.pax.tipi.junit</artifactId>
                 <version>4.12.0.1</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
@@ -792,11 +787,6 @@
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.uncommons</groupId>
-                <artifactId>reportng</artifactId>
-                <version>1.1.4</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>

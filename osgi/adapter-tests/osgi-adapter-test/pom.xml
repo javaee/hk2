@@ -133,10 +133,10 @@
         </dependency>
 
         <!-- Pax-Exam dependencies -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
@@ -166,10 +166,6 @@
             <artifactId>pax-exam-extender-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.ops4j.pax.url</groupId>
             <artifactId>pax-url-aether</artifactId>
         </dependency>
@@ -189,9 +185,9 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.ops4j.pax.tipi</groupId>
             <artifactId>org.ops4j.pax.tipi.junit</artifactId>
-        </dependency>
+        </dependency> -->
     </dependencies>
 </project>
