@@ -40,5 +40,6 @@
 
 -exportcontents: *; version=${project.osgi.version}
 Bundle-Activator: com.oracle.sdp.management.Activator
+Import-Package: org.osgi.framework;version="[1.5,2)"
 
 

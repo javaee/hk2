@@ -41,4 +41,4 @@
 # Export nothing.
 -exportcontents:
 Bundle-Activator: org.jvnet.hk2.osgiadapter.HK2Main
-Import-Package: org.apache.felix.bundlerepository; resolution:=optional, org.jvnet.hk2.component, *
+Import-Package: org.apache.felix.bundlerepository; resolution:=optional, org.jvnet.hk2.component, org.osgi.framework;version="[1.5,2)", org.osgi.util.tracker;version="[1.4,2)", *
