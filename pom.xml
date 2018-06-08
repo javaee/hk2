@@ -169,7 +169,7 @@
         <javassist.version>3.22.0-CR2</javassist.version>
         <junit.version>4.12</junit.version>
         <asm.version>6.0</asm.version>
-        <!--<tiger-types.version>1.4</tiger-types.version>-->
+        <tiger-types.version>1.4</tiger-types.version>
         <woodstox.version>4.1.2</woodstox.version>
         <stax-api.version>1.0-2</stax-api.version>
         <aopalliance.version>1.0</aopalliance.version>
@@ -604,12 +604,12 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>osgi.core</artifactId>
-                <version>7.0.0</version>
+                <version>6.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>osgi.cmpn</artifactId>
-                <version>7.0.0</version>
+                <version>6.0.0</version>
             </dependency>
             <dependency>
                 <groupId>javax.enterprise</groupId>
