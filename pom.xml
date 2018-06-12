@@ -169,7 +169,6 @@
         <javassist.version>3.22.0-CR2</javassist.version>
         <junit.version>4.12</junit.version>
         <asm.version>6.0</asm.version>
-        <tiger-types.version>1.4</tiger-types.version>
         <woodstox.version>4.1.2</woodstox.version>
         <stax-api.version>1.0-2</stax-api.version>
         <aopalliance.version>1.0</aopalliance.version>
@@ -514,11 +513,6 @@
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
                 <version>${glassfish.json.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet</groupId>
-                <artifactId>tiger-types</artifactId>
-                <version>${tiger-types.version}</version>
             </dependency>
             <dependency>
                 <groupId>woodstox</groupId>

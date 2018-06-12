@@ -88,11 +88,6 @@
     </build>
     <dependencies>
 		 <dependency>
-            <groupId>org.jvnet</groupId>
-            <artifactId>tiger-types</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.hk2.external</groupId>
             <artifactId>javax.inject</artifactId>
             <version>${project.version}</version>
