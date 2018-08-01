@@ -118,8 +118,14 @@ public class HK2Main extends Main implements
         
         habitatInfo.serviceLocator = super.createServiceLocator(mr, context, postProcessors, descriptorFileFinder);
         createHK2ServiceTracker(habitatInfo);
+        //convert properties to Hashtable
+        Properties contextArgs = context.getArguments();
+        Hashtable<String,String> contextArgTable = new Hashtable<String,String>();
+        for(Object propKey:contextArgs.stringPropertyNames()) {
+        	contextArgTable.put((String)propKey, (String)contextArgs.get(propKey));        	
+        }
         // register ServiceLocator as an OSGi service
-        habitatInfo.habitatRegistration = ctx.registerService(ServiceLocator.class.getName(), habitatInfo.serviceLocator, context.getArguments());
+        habitatInfo.habitatRegistration = ctx.registerService(ServiceLocator.class.getName(), habitatInfo.serviceLocator, contextArgTable);
         habitatInfos.put(habitatInfo.serviceLocator, habitatInfo);
         return habitatInfo.serviceLocator;
     }

@@ -76,7 +76,7 @@ public class CustomMockSettingsInjectionTest {
         assertThat(collaborator).isNotNull();
         assertThat(mockingDetails(sut).isSpy()).isTrue();
         assertThat(mockingDetails(collaborator).isMock()).isTrue();
-        MockCreationSettings settings = new MockUtil().getMockHandler(collaborator).getMockSettings();
+		MockCreationSettings settings = MockUtil.getMockHandler(collaborator).getMockSettings();
 
         assertThat(settings.getMockName().toString()).isEqualTo("customName");
         assertThat(settings.getDefaultAnswer()).isEqualTo(Answers.RETURNS_MOCKS.get());

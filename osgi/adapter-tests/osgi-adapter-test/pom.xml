@@ -133,10 +133,7 @@
         </dependency>
 
         <!-- Pax-Exam dependencies -->
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam</artifactId>
-        </dependency>
+       
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-native</artifactId>
@@ -160,14 +157,16 @@
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-api</artifactId>
+	    <exclusions>
+       		 <exclusion>
+          	 <groupId>avalon-framework</groupId>
+         	 <artifactId>avalon-framework-api</artifactId>
+            	 </exclusion>
+            </exclusions> 
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-extender-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.url</groupId>
@@ -178,20 +177,12 @@
             <artifactId>org.apache.felix.framework</artifactId>
         </dependency>
         <dependency>
-           <groupId>org.apache.geronimo.specs</groupId>
-           <artifactId>geronimo-atinject_1.0_spec</artifactId>
-        </dependency> 
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.tipi</groupId>
-            <artifactId>org.ops4j.pax.tipi.junit</artifactId>
         </dependency>
     </dependencies>
 </project>

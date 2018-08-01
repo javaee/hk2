@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.Hashtable;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
@@ -405,7 +406,7 @@ class ObrHandler extends ServiceTracker {
         for (int repoIdx = 0; (repos != null) && (repoIdx < repos.length); repoIdx++) {
             resources = repos[repoIdx].getResources();
             for (int resIdx = 0; (resources != null) && (resIdx < resources.length); resIdx++) {
-                Properties dict = new Properties();
+                Hashtable dict = new Hashtable();
                 dict.putAll(resources[resIdx].getProperties());
                 if (filter == null || filter.match(dict)) {
                     matchList.add(resources[resIdx]);
