@@ -118,13 +118,13 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/hk2-project/hk2/issues</url>
+        <url>https://github.com/javaee/hk2/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/hk2-project/hk2.git</connection>
-        <developerConnection>scm:git:git@github.com:hk2-project/hk2.git</developerConnection>
-        <url>https://hk2-project.github.io</url>
+        <connection>scm:git:https://github.com/javaee/hk2.git</connection>
+        <developerConnection>scm:git:git@github.com:javaee/hk2.git</developerConnection>
+        <url>https://github.com/javaee/hk2</url>
         <tag>HEAD</tag>
     </scm>
 
