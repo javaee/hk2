@@ -3,7 +3,7 @@
 
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-    Copyright (c) 2010-2017 Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2010-2018 Oracle and/or its affiliates. All rights reserved.
 
     The contents of this file are subject to the terms of either the GNU
     General Public License Version 2 only ("GPL") or the Common Development
@@ -57,6 +57,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                           <execution>
+                               <id>create-empty-javadoc-jar</id>
+                               <goals>
+                                   <goal>jar</goal>
+                               </goals>
+                               <configuration>
+                                   <classesDirectory>
+                                       ${project.build.directory}/javadoc
+                                   </classesDirectory>
+                                   <classifier>javadoc</classifier>
+                               </configuration>
+                           </execution>
+                       </executions>
                 <configuration>
                     <archive>
                         <manifest>
