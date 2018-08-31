@@ -1,3 +1,6 @@
+#### :warning:This project is now part of the EE4J initiative. This repository has been archived as all activities are now happening in the [corresponding Eclipse repository](http://link_to_repo). See [here](https://www.eclipse.org/ee4j/status.php) for the overall EE4J transition status.
+ 
+---
 [//]: # " DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER. "
 [//]: # "  "
 [//]: # " Copyright (c) 2017 Oracle and/or its affiliates. All rights reserved. "
